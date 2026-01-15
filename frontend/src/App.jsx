@@ -1,0 +1,115 @@
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
+
+// Layouts
+import PublicLayout from './layouts/PublicLayout';
+import DashboardLayout from './layouts/DashboardLayout';
+
+// Public Pages
+import LandingPage from './pages/public/LandingPage';
+import HowItWorks from './pages/public/HowItWorks';
+import Services from './pages/public/Services';
+import ConstructionServices from './pages/public/ConstructionServices';
+import EducationServices from './pages/public/EducationServices';
+import HealthcareServices from './pages/public/HealthcareServices';
+import About from './pages/public/About';
+import ZororoPhumulani from './pages/public/ZororoPhumulani';
+import ProviderWaitingList from './pages/public/ProviderWaitingList';
+import ClientWaitingList from './pages/public/ClientWaitingList';
+import Login from './pages/auth/Login';
+import SignUp from './pages/auth/SignUp';
+
+// App Pages (After Login)
+import UserDashboard from './pages/app/user/Dashboard';
+import CreateContract from './pages/app/user/CreateContract';
+import ContractDetails from './pages/app/user/ContractDetails';
+
+import ProviderDashboard from './pages/app/provider/Dashboard';
+import ProviderContracts from './pages/app/provider/Contracts';
+
+import AdminDashboard from './pages/app/admin/Dashboard';
+
+// Context
+import { AuthProvider } from './context/AuthContext';
+
+// Protected Route Component
+const ProtectedRoute = ({ children, requiredRole }) => {
+  const user = JSON.parse(localStorage.getItem('user') || 'null');
+  
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  if (requiredRole && user.role !== requiredRole) {
+    return <Navigate to={`/${user.role}/dashboard`} replace />;
+  }
+  
+  return children;
+};
+
+function App() {
+  return (
+    <AuthProvider>
+      <Router>
+        <AnimatePresence mode="wait">
+          <Routes>
+            {/* Public Routes */}
+            <Route element={<PublicLayout />}>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/how-it-works" element={<HowItWorks />} />
+              <Route path="/services" element={<Services />} />
+              <Route path="/services/:category" element={<Services />} />
+              <Route path="/services/construction" element={<ConstructionServices />} />
+              <Route path="/services/education" element={<EducationServices />} />
+              <Route path="/services/healthcare" element={<HealthcareServices />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/zororo-phumulani" element={<ZororoPhumulani />} />
+              <Route path="/provider-signup" element={<ProviderWaitingList />} />
+              <Route path="/client-signup" element={<ClientWaitingList />} />
+            </Route>
+
+            {/* Auth Routes */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignUp />} />
+
+            {/* User/Client Routes */}
+            <Route element={
+              <ProtectedRoute requiredRole="client">
+                <DashboardLayout role="client" />
+              </ProtectedRoute>
+            }>
+              <Route path="/client/dashboard" element={<UserDashboard />} />
+              <Route path="/client/create-contract" element={<CreateContract />} />
+              <Route path="/client/contract/:id" element={<ContractDetails />} />
+            </Route>
+
+            {/* Service Provider Routes */}
+            <Route element={
+              <ProtectedRoute requiredRole="provider">
+                <DashboardLayout role="provider" />
+              </ProtectedRoute>
+            }>
+              <Route path="/provider/dashboard" element={<ProviderDashboard />} />
+              <Route path="/provider/contracts" element={<ProviderContracts />} />
+            </Route>
+
+            {/* Admin Routes */}
+            <Route element={
+              <ProtectedRoute requiredRole="admin">
+                <DashboardLayout role="admin" />
+              </ProtectedRoute>
+            }>
+              <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            </Route>
+
+            {/* 404 */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </AnimatePresence>
+      </Router>
+    </AuthProvider>
+  );
+}
+
+export default App;

@@ -232,6 +232,77 @@ const LandingPage = () => {
         </div>
       </section>
 
+      {/* Zororo Phumulani Insurance Section */}
+      <section className="section bg-white">
+        <div className="container-custom">
+          <AnimatedSection>
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              {/* Left: Text Content */}
+              <div>
+                <div className="inline-block bg-secondary-100 text-secondary-800 px-4 py-2 rounded-full text-sm font-semibold mb-4">
+                  Insurance Protection
+                </div>
+                <h2 className="text-primary mb-6">Insurance Protection by Zororo Phumulani</h2>
+                <p className="text-xl text-neutral-700 mb-8">
+                  Protect your family with comprehensive funeral cover, repatriation services, and accidental death protection. 
+                  Designed for diaspora families with affordable monthly premiums.
+                </p>
+
+                {/* Benefits List */}
+                <div className="space-y-4 mb-8">
+                  {[
+                    { icon: '🛡️', title: 'Funeral Cover', desc: 'Complete funeral arrangements and support' },
+                    { icon: '✈️', title: 'Repatriation', desc: 'Worldwide repatriation services included' },
+                    { icon: '🏥', title: 'Accidental Death', desc: 'Immediate cover for unexpected events' },
+                    { icon: '👨‍👩‍👧‍👦', title: 'Family Coverage', desc: 'Spouse and up to 6 children covered' }
+                  ].map((benefit, index) => (
+                    <div key={index} className="flex items-start">
+                      <div className="text-3xl mr-4">{benefit.icon}</div>
+                      <div>
+                        <h4 className="font-semibold text-primary mb-1">{benefit.title}</h4>
+                        <p className="text-neutral-600">{benefit.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Trust Signals */}
+                <div className="bg-primary-50 border-l-4 border-primary rounded-lg p-6 mb-8">
+                  <div className="flex items-start">
+                    <svg className="w-6 h-6 text-primary mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    <div>
+                      <p className="font-semibold text-primary mb-1">Authorised FSP</p>
+                      <p className="text-sm text-neutral-600">Underwritten by a licensed insurer. Your family's protection is guaranteed.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <Button to="/insurance/zororo-phumulani" variant="primary" size="lg">
+                  View Insurance Plans
+                </Button>
+              </div>
+
+              {/* Right: Image */}
+              <div className="relative">
+                <div className="aspect-square rounded-2xl overflow-hidden shadow-2xl">
+                  <img 
+                    src="https://images.unsplash.com/photo-1511895426328-dc8714191300?w=600" 
+                    alt="Family protection and care" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-xl shadow-xl">
+                  <div className="text-4xl font-bold text-secondary">24/7</div>
+                  <div className="text-sm text-neutral-600">Family Support</div>
+                </div>
+              </div>
+            </div>
+          </AnimatedSection>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="section bg-gradient-to-br from-primary to-secondary text-white">
         <div className="container-custom">

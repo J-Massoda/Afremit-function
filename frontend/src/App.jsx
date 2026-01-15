@@ -20,6 +20,12 @@ import ClientWaitingList from './pages/public/ClientWaitingList';
 import Login from './pages/auth/Login';
 import SignUp from './pages/auth/SignUp';
 
+// Insurance Pages
+import InsurancePlans from './pages/insurance/InsurancePlans';
+import SubscriptionFlow from './pages/insurance/SubscriptionFlow';
+import PaymentPage from './pages/insurance/PaymentPage';
+import ConfirmationPage from './pages/insurance/ConfirmationPage';
+
 // App Pages (After Login)
 import UserDashboard from './pages/app/user/Dashboard';
 import CreateContract from './pages/app/user/CreateContract';
@@ -67,6 +73,12 @@ function App() {
               <Route path="/zororo-phumulani" element={<ZororoPhumulani />} />
               <Route path="/provider-signup" element={<ProviderWaitingList />} />
               <Route path="/client-signup" element={<ClientWaitingList />} />
+              
+              {/* Insurance Routes */}
+              <Route path="/insurance/zororo-phumulani" element={<InsurancePlans />} />
+              <Route path="/insurance/subscribe/:planId" element={<SubscriptionFlow />} />
+              <Route path="/insurance/payment" element={<PaymentPage />} />
+              <Route path="/insurance/confirmation" element={<ConfirmationPage />} />
             </Route>
 
             {/* Auth Routes */}

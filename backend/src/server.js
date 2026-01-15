@@ -5,6 +5,7 @@ import contractRoutes from './routes/contracts.js';
 import userRoutes from './routes/users.js';
 import milestoneRoutes from './routes/milestones.js';
 import paymentRoutes from './routes/payments.js';
+import insuranceRoutes from '../routes/insurance.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -19,6 +20,7 @@ app.use('/api/contracts', contractRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/milestones', milestoneRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/insurance', insuranceRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

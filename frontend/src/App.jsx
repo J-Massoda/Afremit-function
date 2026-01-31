@@ -35,12 +35,21 @@ import ProviderDashboard from './pages/app/provider/Dashboard';
 import ProviderContracts from './pages/app/provider/Contracts';
 
 import AdminDashboard from './pages/app/admin/Dashboard';
+import AdminKYCReview from './pages/app/admin/AdminKYCReview';
+
+// KYC Forms
+import ClientKYCForm from './pages/app/user/ClientKYCForm';
+import ProviderKYCForm from './pages/app/provider/ProviderKYCForm';
+
+// Provider Directory
+import ProviderDirectory from './pages/public/ProviderDirectory';
+import ProviderProfile from './pages/public/ProviderProfile';
 
 // Context
 import { AuthProvider } from './context/AuthContext';
 
-// Protected Route Component
-const ProtectedRoute = ({ children, requiredRole }) => {
+// Protected Route Component with State Checks
+const ProtectedRoute = ({ children, requiredRole, requiresVerified }) => {
   const user = JSON.parse(localStorage.getItem('user') || 'null');
   
   if (!user) {
@@ -49,6 +58,15 @@ const ProtectedRoute = ({ children, requiredRole }) => {
   
   if (requiredRole && user.role !== requiredRole) {
     return <Navigate to={`/${user.role}/dashboard`} replace />;
+  }
+
+  // Check if user needs to complete KYC
+  if (requiresVerified && user.state !== 'VERIFIED' && user.state !== 'PUBLISHED') {
+    if (user.role === 'client') {
+      return <Navigate to="/client/kyc" replace />;
+    } else if (user.role === 'provider') {
+      return <Navigate to="/provider/kyc" replace />;
+    }
   }
   
   return children;
@@ -73,6 +91,8 @@ function App() {
               <Route path="/zororo-phumulani" element={<ZororoPhumulani />} />
               <Route path="/provider-signup" element={<ProviderWaitingList />} />
               <Route path="/client-signup" element={<ClientWaitingList />} />
+              <Route path="/providers" element={<ProviderDirectory />} />
+              <Route path="/providers/:id" element={<ProviderProfile />} />
               
               {/* Insurance Routes */}
               <Route path="/insurance/zororo-phumulani" element={<InsurancePlans />} />
@@ -92,6 +112,7 @@ function App() {
               </ProtectedRoute>
             }>
               <Route path="/client/dashboard" element={<UserDashboard />} />
+              <Route path="/client/kyc" element={<ClientKYCForm />} />
               <Route path="/client/create-contract" element={<CreateContract />} />
               <Route path="/client/contract/:id" element={<ContractDetails />} />
             </Route>
@@ -103,6 +124,7 @@ function App() {
               </ProtectedRoute>
             }>
               <Route path="/provider/dashboard" element={<ProviderDashboard />} />
+              <Route path="/provider/kyc" element={<ProviderKYCForm />} />
               <Route path="/provider/contracts" element={<ProviderContracts />} />
             </Route>
 
@@ -113,6 +135,7 @@ function App() {
               </ProtectedRoute>
             }>
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
+              <Route path="/admin/kyc" element={<AdminKYCReview />} />
             </Route>
 
             {/* 404 */}

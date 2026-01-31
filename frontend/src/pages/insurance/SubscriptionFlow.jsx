@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Button from '../../components/shared/Button';
 import Card from '../../components/shared/Card';
+import Icon from '../../components/shared/Icon';
 
 const SubscriptionFlow = () => {
   const { planId } = useParams();
@@ -40,7 +41,7 @@ const SubscriptionFlow = () => {
         id: 'funeral-repatriation',
         name: 'Funeral & Repatriation Plan',
         monthlyPremium: '$25',
-        icon: '🛡️',
+        icon: 'shield',
         coverageSummary: 'Complete funeral cover with repatriation from South Africa',
         waitingPeriod: '6 months for natural death'
       },
@@ -48,7 +49,7 @@ const SubscriptionFlow = () => {
         id: 'worldwide-funeral',
         name: 'Worldwide Funeral Plan',
         monthlyPremium: '$45',
-        icon: '✈️',
+        icon: 'airplane',
         coverageSummary: 'Worldwide repatriation and international funeral coverage',
         waitingPeriod: '3 months for natural death'
       },
@@ -56,7 +57,7 @@ const SubscriptionFlow = () => {
         id: 'accidental-death',
         name: 'Accidental Death Cover',
         monthlyPremium: '$15',
-        icon: '🚑',
+        icon: 'medical',
         coverageSummary: 'Immediate accidental death coverage with no waiting period',
         waitingPeriod: 'No waiting period'
       }
@@ -66,10 +67,10 @@ const SubscriptionFlow = () => {
   }, [planId]);
 
   const steps = [
-    { number: 1, title: 'Personal Details', icon: '👤' },
-    { number: 2, title: 'Beneficiary Details', icon: '👨‍👩‍👧‍👦' },
-    { number: 3, title: 'Review & Confirm', icon: '✓' },
-    { number: 4, title: 'Payment', icon: '💳' }
+    { number: 1, title: 'Personal Details', icon: 'user' },
+    { number: 2, title: 'Beneficiary Details', icon: 'users' },
+    { number: 3, title: 'Review & Confirm', icon: 'check' },
+    { number: 4, title: 'Payment', icon: 'creditCard' }
   ];
 
   const handleChange = (e) => {

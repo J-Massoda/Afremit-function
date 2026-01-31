@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import Card from '../../../components/shared/Card';
 import Button from '../../../components/shared/Button';
 import Input, { TextArea, Select } from '../../../components/shared/Input';
+import Icon from '../../../components/shared/Icon';
 import { contractsAPI } from '../../../services/api';
 
 const CreateContract = () => {
@@ -170,8 +171,8 @@ const CreateContract = () => {
             <Card>
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-2xl font-bold">Define Milestones</h3>
-                <Button type="button" onClick={addMilestone} variant="secondary" size="sm">
-                  ➕ Add Milestone
+                <Button type="button" onClick={addMilestone} variant="secondary" size="sm" className="flex items-center gap-2">
+                  <Icon name="plus" className="w-4 h-4" /> Add Milestone
                 </Button>
               </div>
 
@@ -268,7 +269,9 @@ const CreateContract = () => {
               </div>
 
               <div className="bg-accent-50 border-2 border-accent rounded-lg p-4 mt-6">
-                <p className="font-semibold text-accent-900 mb-2">⚠️ Important</p>
+                <p className="font-semibold text-accent-900 mb-2 flex items-center gap-2">
+                  <Icon name="warning" className="w-5 h-5" /> Important
+                </p>
                 <p className="text-sm text-neutral-700">
                   Once created, you'll need to fund the escrow account before the provider can begin work. 
                   Funds will be held securely and released only when you approve each milestone.

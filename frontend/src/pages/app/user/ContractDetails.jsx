@@ -6,6 +6,7 @@ import Button from '../../../components/shared/Button';
 import Badge from '../../../components/shared/Badge';
 import ProgressBar from '../../../components/shared/ProgressBar';
 import Modal from '../../../components/shared/Modal';
+import Icon from '../../../components/shared/Icon';
 
 const ContractDetails = () => {
   const { id } = useParams();
@@ -77,14 +78,16 @@ const ContractDetails = () => {
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         {[
-          { label: 'Total Value', value: `R${contract.totalAmount.toLocaleString()}`, icon: '💰' },
-          { label: 'In Escrow', value: `R${contract.escrowBalance.toLocaleString()}`, icon: '🔒' },
-          { label: 'Released', value: `R${contract.releasedAmount.toLocaleString()}`, icon: '✅' },
-          { label: 'Progress', value: `${contract.progress}%`, icon: '📊' }
+          { label: 'Total Value', value: `R${contract.totalAmount.toLocaleString()}`, icon: 'money' },
+          { label: 'In Escrow', value: `R${contract.escrowBalance.toLocaleString()}`, icon: 'lock' },
+          { label: 'Released', value: `R${contract.releasedAmount.toLocaleString()}`, icon: 'check' },
+          { label: 'Progress', value: `${contract.progress}%`, icon: 'chart' }
         ].map((stat, index) => (
           <Card key={index}>
             <div className="text-center">
-              <div className="text-3xl mb-2">{stat.icon}</div>
+              <div className="mb-2 flex justify-center">
+                <Icon name={stat.icon} className="w-8 h-8 text-primary" />
+              </div>
               <p className="text-sm text-neutral-600">{stat.label}</p>
               <p className="text-2xl font-bold text-primary">{stat.value}</p>
             </div>
@@ -176,8 +179,8 @@ const ContractDetails = () => {
                 </div>
               </div>
               <div className="text-sm text-neutral-600">
-                <p>📧 {contract.provider.email}</p>
-                <p>📞 {contract.provider.phone}</p>
+                <p className="flex items-center gap-2"><Icon name="mail" className="w-4 h-4" /> {contract.provider.email}</p>
+                <p className="flex items-center gap-2"><Icon name="phone" className="w-4 h-4" /> {contract.provider.phone}</p>
               </div>
               <Button variant="outline" size="sm" className="w-full">
                 Message Provider
@@ -189,14 +192,14 @@ const ContractDetails = () => {
           <Card>
             <h3 className="text-xl font-bold mb-4">Actions</h3>
             <div className="space-y-2">
-              <Button variant="secondary" size="sm" className="w-full">
-                💬 Contact Support
+              <Button variant="secondary" size="sm" className="w-full flex items-center justify-center gap-2">
+                <Icon name="chat" className="w-4 h-4" /> Contact Support
               </Button>
-              <Button variant="outline" size="sm" className="w-full">
-                📄 Download Contract
+              <Button variant="outline" size="sm" className="w-full flex items-center justify-center gap-2">
+                <Icon name="document" className="w-4 h-4" /> Download Contract
               </Button>
-              <Button variant="ghost" size="sm" className="w-full text-danger">
-                ⚠️ Report Issue
+              <Button variant="ghost" size="sm" className="w-full text-danger flex items-center justify-center gap-2">
+                <Icon name="warning" className="w-4 h-4" /> Report Issue
               </Button>
             </div>
           </Card>
@@ -216,7 +219,9 @@ const ContractDetails = () => {
             <p className="text-neutral-600 mb-4">Amount: R{selectedMilestone.amount.toLocaleString()}</p>
 
             <div className="bg-accent-50 border-2 border-accent rounded-lg p-4 mb-6">
-              <p className="font-semibold text-accent-900 mb-2">⚠️ Approval Confirmation</p>
+              <p className="font-semibold text-accent-900 mb-2 flex items-center gap-2">
+                <Icon name="warning" className="w-5 h-5" /> Approval Confirmation
+              </p>
               <p className="text-sm text-neutral-700">
                 By approving this milestone, R{selectedMilestone.amount.toLocaleString()} will be immediately 
                 released from escrow to the service provider. This action cannot be undone.

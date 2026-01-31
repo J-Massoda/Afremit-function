@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Button from '../../components/shared/Button';
-import Card from '../../components/shared/Card';
-
+import Card from '../../components/shared/Card';import Icon from '../../components/shared/Icon';
 const PaymentPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -120,7 +119,7 @@ const PaymentPage = () => {
                   />
                   <div className="ml-4 flex-1">
                     <div className="flex items-center">
-                      <span className="text-3xl mr-3">📱</span>
+                      <Icon name="phone" className="w-8 h-8 mr-3 text-primary" />
                       <div>
                         <p className="font-bold text-primary">EcoCash</p>
                         <p className="text-sm text-neutral-600">Pay with your EcoCash mobile wallet</p>
@@ -171,7 +170,7 @@ const PaymentPage = () => {
                   />
                   <div className="ml-4 flex-1">
                     <div className="flex items-center">
-                      <span className="text-3xl mr-3">💳</span>
+                      <Icon name="creditCard" className="w-8 h-8 mr-3 text-primary" />
                       <div>
                         <p className="font-bold text-primary">Debit / Credit Card</p>
                         <p className="text-sm text-neutral-600">Pay with Visa, Mastercard, or other cards</p>

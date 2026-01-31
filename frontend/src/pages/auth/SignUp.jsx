@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
 import Input, { Select } from '../../components/shared/Input';
 import Button from '../../components/shared/Button';
+import Icon from '../../components/shared/Icon';
 
 const SignUp = () => {
   const [step, setStep] = useState(1);
@@ -120,7 +121,7 @@ const SignUp = () => {
                   className="p-6 border-2 border-neutral-200 rounded-xl cursor-pointer hover:border-secondary hover:bg-secondary-50 transition-all"
                 >
                   <div className="flex items-start gap-4">
-                    <div className="text-4xl">👤</div>
+                    <Icon name="user" className="w-10 h-10 text-secondary" />
                     <div className="flex-1">
                       <h4 className="font-bold mb-2">I'm a Client</h4>
                       <p className="text-neutral-600 text-sm">
@@ -138,7 +139,7 @@ const SignUp = () => {
                   className="p-6 border-2 border-neutral-200 rounded-xl cursor-pointer hover:border-secondary hover:bg-secondary-50 transition-all"
                 >
                   <div className="flex items-start gap-4">
-                    <div className="text-4xl">🏗️</div>
+                    <Icon name="building" className="w-10 h-10 text-secondary" />
                     <div className="flex-1">
                       <h4 className="font-bold mb-2">I'm a Service Provider</h4>
                       <p className="text-neutral-600 text-sm">

@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import Button from '../../components/shared/Button';
 import Card from '../../components/shared/Card';
+import Icon from '../../components/shared/Icon';
 
 const HowItWorks = () => {
   const steps = [
@@ -9,7 +10,7 @@ const HowItWorks = () => {
       number: '01',
       title: 'Select Your Service Provider',
       description: 'Browse our verified list of trusted construction companies and contractors across Africa. All providers are thoroughly vetted and insured.',
-      image: '🏗️',
+      image: 'building',
       details: [
         'View provider profiles and ratings',
         'Check credentials and past projects',
@@ -21,7 +22,7 @@ const HowItWorks = () => {
       number: '02',
       title: 'Create Your Contract',
       description: 'Define your construction project with clear milestones. Break down the project into phases with specific deliverables and payment amounts.',
-      image: '📝',
+      image: 'edit',
       details: [
         'Set project scope and timeline',
         'Define clear milestones',
@@ -33,7 +34,7 @@ const HowItWorks = () => {
       number: '03',
       title: 'Fund the Escrow',
       description: 'Deposit the total project amount into our secure escrow account. Your money is protected and only released when milestones are completed.',
-      image: '💰',
+      image: 'money',
       details: [
         'Secure bank transfer or card payment',
         'Funds held in protected escrow',
@@ -45,7 +46,7 @@ const HowItWorks = () => {
       number: '04',
       title: 'Provider Completes Milestone',
       description: 'The service provider works on the first milestone. They submit proof of completion with photos, documents, or other evidence.',
-      image: '✅',
+      image: 'check',
       details: [
         'Provider uploads completion evidence',
         'Photo/video documentation',
@@ -57,7 +58,7 @@ const HowItWorks = () => {
       number: '05',
       title: 'You Approve the Work',
       description: 'Review the submitted work and evidence. Approve the milestone if you\'re satisfied, or request revisions if needed.',
-      image: '👁️',
+      image: 'eye',
       details: [
         'Review documentation',
         'Inspect completed work',
@@ -69,7 +70,7 @@ const HowItWorks = () => {
       number: '06',
       title: 'Automatic Payment Release',
       description: 'Once you approve the milestone, payment is automatically released from escrow to the provider. The process repeats for each milestone.',
-      image: '🎉',
+      image: 'sparkles',
       details: [
         'Instant fund release',
         'Provider receives payment',
@@ -115,7 +116,9 @@ const HowItWorks = () => {
                 {/* Number & Icon */}
                 <div className="w-full md:w-1/3 text-center">
                   <div className="inline-block">
-                    <div className="text-8xl mb-4">{step.image}</div>
+                    <div className="mb-4 flex justify-center">
+                      <Icon name={step.image} className="w-24 h-24 text-accent" />
+                    </div>
                     <div className="text-6xl font-bold text-accent opacity-20">{step.number}</div>
                   </div>
                 </div>
@@ -149,10 +152,10 @@ const HowItWorks = () => {
           <h2 className="text-center mb-12">Key Benefits of Milestone Escrow</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { icon: '🔒', title: 'Secure', description: 'Funds protected until work is done' },
-              { icon: '👁️', title: 'Transparent', description: 'Track every milestone and payment' },
-              { icon: '⚡', title: 'Fast', description: 'Instant release upon approval' },
-              { icon: '🛡️', title: 'Protected', description: 'Insurance-backed guarantee' }
+              { icon: 'lock', title: 'Secure', description: 'Funds protected until work is done' },
+              { icon: 'eye', title: 'Transparent', description: 'Track every milestone and payment' },
+              { icon: 'lightning', title: 'Fast', description: 'Instant release upon approval' },
+              { icon: 'shield', title: 'Protected', description: 'Insurance-backed guarantee' }
             ].map((benefit, index) => (
               <motion.div
                 key={index}
@@ -162,7 +165,9 @@ const HowItWorks = () => {
                 transition={{ delay: index * 0.1 }}
               >
                 <Card className="text-center h-full">
-                  <div className="text-5xl mb-3">{benefit.icon}</div>
+                  <div className="mb-3 flex justify-center">
+                    <Icon name={benefit.icon} className="w-12 h-12 text-accent" />
+                  </div>
                   <h4 className="mb-2">{benefit.title}</h4>
                   <p className="text-neutral-600 text-sm">{benefit.description}</p>
                 </Card>

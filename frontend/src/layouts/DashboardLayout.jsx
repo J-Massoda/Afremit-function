@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
+import Icon from '../components/shared/Icon';
 
 const DashboardLayout = ({ role }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -16,19 +17,19 @@ const DashboardLayout = ({ role }) => {
 
   const navigation = {
     client: [
-      { name: 'Dashboard', path: '/client/dashboard', icon: '📊' },
-      { name: 'Create Contract', path: '/client/create-contract', icon: '➕' },
-      { name: 'My Contracts', path: '/client/dashboard', icon: '📄' },
+      { name: 'Dashboard', path: '/client/dashboard', icon: 'dashboard' },
+      { name: 'Create Contract', path: '/client/create-contract', icon: 'edit' },
+      { name: 'My Contracts', path: '/client/dashboard', icon: 'document' },
     ],
     provider: [
-      { name: 'Dashboard', path: '/provider/dashboard', icon: '📊' },
-      { name: 'Contracts', path: '/provider/contracts', icon: '📄' },
-      { name: 'Earnings', path: '/provider/dashboard', icon: '💰' },
+      { name: 'Dashboard', path: '/provider/dashboard', icon: 'dashboard' },
+      { name: 'Contracts', path: '/provider/contracts', icon: 'document' },
+      { name: 'Earnings', path: '/provider/dashboard', icon: 'money' },
     ],
     admin: [
-      { name: 'Dashboard', path: '/admin/dashboard', icon: '📊' },
-      { name: 'Approve Providers', path: '/admin/dashboard', icon: '✅' },
-      { name: 'Manage Contracts', path: '/admin/dashboard', icon: '📝' },
+      { name: 'Dashboard', path: '/admin/dashboard', icon: 'dashboard' },
+      { name: 'Approve Providers', path: '/admin/dashboard', icon: 'check' },
+      { name: 'Manage Contracts', path: '/admin/dashboard', icon: 'edit' },
     ],
   };
 
@@ -90,7 +91,7 @@ const DashboardLayout = ({ role }) => {
                     : 'text-neutral-700 hover:bg-neutral-100'
                 }`}
               >
-                <span className="text-xl">{item.icon}</span>
+                <Icon name={item.icon} className="w-5 h-5" />
                 <span className="font-medium whitespace-nowrap">{item.name}</span>
               </Link>
             );

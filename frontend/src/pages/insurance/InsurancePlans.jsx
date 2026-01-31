@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Button from '../../components/shared/Button';
 import Card from '../../components/shared/Card';
+import Icon from '../../components/shared/Icon';
 
 const InsurancePlans = () => {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ const InsurancePlans = () => {
       tagline: 'Complete funeral cover with repatriation',
       startingPrice: 'Starting from $25',
       popular: true,
-      icon: '🛡️',
+      icon: 'shield',
       color: 'primary',
       keyBenefits: [
         'Funeral arrangements and costs covered',
@@ -50,7 +51,7 @@ const InsurancePlans = () => {
       tagline: 'Global coverage with international repatriation',
       startingPrice: 'Starting from $45',
       popular: false,
-      icon: '✈️',
+      icon: 'airplane',
       color: 'secondary',
       keyBenefits: [
         'Worldwide repatriation included',
@@ -87,7 +88,7 @@ const InsurancePlans = () => {
       tagline: 'Immediate protection for accidents',
       startingPrice: 'From $15',
       popular: false,
-      icon: '🚑',
+      icon: 'medical',
       color: 'accent',
       keyBenefits: [
         'Accidental death coverage only',
@@ -205,7 +206,9 @@ const InsurancePlans = () => {
                 <Card className={`h-full ${plan.popular ? 'ring-2 ring-secondary shadow-2xl' : ''}`}>
                   {/* Plan Header */}
                   <div className="text-center mb-6">
-                    <div className="text-6xl mb-4">{plan.icon}</div>
+                    <div className="mb-4 flex justify-center">
+                      <Icon name={plan.icon} className="w-16 h-16 text-primary" />
+                    </div>
                     <h3 className="text-2xl font-bold text-primary mb-2">{plan.name}</h3>
                     <p className="text-neutral-600 mb-4">{plan.tagline}</p>
                     <div className="text-3xl font-bold text-secondary mb-2">{plan.startingPrice}</div>
@@ -265,7 +268,9 @@ const InsurancePlans = () => {
               <div className="max-w-4xl mx-auto">
                 {/* Plan Header */}
                 <div className="text-center mb-12">
-                  <div className="text-6xl mb-4">{plan.icon}</div>
+                  <div className="mb-4 flex justify-center">
+                    <Icon name={plan.icon} className="w-16 h-16 text-primary" />
+                  </div>
                   <h2 className="text-primary mb-4">{plan.name}</h2>
                   <p className="text-xl text-neutral-600">{plan.tagline}</p>
                 </div>
@@ -349,17 +354,23 @@ const InsurancePlans = () => {
             <h2 className="mb-6">Why Choose Zororo Phumulani?</h2>
             <div className="grid md:grid-cols-3 gap-8 mt-12">
               <div>
-                <div className="text-5xl mb-4">⚡</div>
+                <div className="mb-4 flex justify-center">
+                  <Icon name="lightning" className="w-12 h-12 text-white" />
+                </div>
                 <h3 className="text-xl font-bold mb-2">Instant Coverage</h3>
                 <p className="text-secondary-100">Subscribe online and get immediate protection</p>
               </div>
               <div>
-                <div className="text-5xl mb-4">💰</div>
+                <div className="mb-4 flex justify-center">
+                  <Icon name="money" className="w-12 h-12 text-white" />
+                </div>
                 <h3 className="text-xl font-bold mb-2">Affordable Premiums</h3>
                 <p className="text-secondary-100">Plans starting from just $15 per month</p>
               </div>
               <div>
-                <div className="text-5xl mb-4">🌍</div>
+                <div className="mb-4 flex justify-center">
+                  <Icon name="location" className="w-12 h-12 text-white" />
+                </div>
                 <h3 className="text-xl font-bold mb-2">Diaspora Friendly</h3>
                 <p className="text-secondary-100">Designed for families living abroad</p>
               </div>

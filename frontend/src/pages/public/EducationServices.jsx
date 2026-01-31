@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import Button from '../../components/shared/Button';
 import Card from '../../components/shared/Card';
+import Icon from '../../components/shared/Icon';
 
 const EducationServices = () => {
   return (
@@ -133,19 +134,19 @@ const EducationServices = () => {
             {[
               {
                 title: 'Universities & Colleges',
-                icon: '🎓',
+                icon: 'briefcase',
                 details: ['Undergraduate programs', 'Postgraduate studies', 'Professional degrees', 'Online courses'],
                 image: 'https://images.unsplash.com/photo-1562774053-701939374585?w=400'
               },
               {
                 title: 'Secondary Schools',
-                icon: '📖',
+                icon: 'briefcase',
                 details: ['High schools', 'Boarding schools', 'Day schools', 'International curricula'],
                 image: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400'
               },
               {
                 title: 'Vocational Training',
-                icon: '💼',
+                icon: 'briefcase',
                 details: ['Technical colleges', 'Skills development', 'Professional certifications', 'Trade schools'],
                 image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400'
               }
@@ -161,7 +162,9 @@ const EducationServices = () => {
                   <div className="aspect-video overflow-hidden rounded-t-xl -m-6 mb-4">
                     <img src={category.image} alt={category.title} className="w-full h-full object-cover hover:scale-110 transition-transform duration-500" />
                   </div>
-                  <div className="text-5xl mb-4">{category.icon}</div>
+                  <div className="mb-4 flex justify-start">
+                    <Icon name={category.icon} className="w-12 h-12 text-primary" />
+                  </div>
                   <h3 className="text-2xl font-bold text-primary mb-4">{category.title}</h3>
                   <ul className="space-y-2">
                     {category.details.map((item, idx) => (

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Card from '../../../components/shared/Card';
 import Badge from '../../../components/shared/Badge';
+import Icon from '../../../components/shared/Icon';
 
 const ProviderDashboard = () => {
   const [stats, setStats] = useState({
@@ -13,19 +14,21 @@ const ProviderDashboard = () => {
 
   return (
     <div>
-      <h1 className="text-4xl font-bold text-primary mb-8">Provider Dashboard 👷</h1>
+      <h1 className="text-4xl font-bold text-primary mb-8">Provider Dashboard</h1>
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         {[
-          { label: 'Active Contracts', value: stats.activeContracts, icon: '📄' },
-          { label: 'Completed Milestones', value: stats.completedMilestones, icon: '✅' },
-          { label: 'Total Earnings', value: `R${stats.totalEarnings.toLocaleString()}`, icon: '💰' },
-          { label: 'Pending Payments', value: `R${stats.pendingPayments.toLocaleString()}`, icon: '⏳' }
+          { label: 'Active Contracts', value: stats.activeContracts, icon: 'document' },
+          { label: 'Completed Milestones', value: stats.completedMilestones, icon: 'check' },
+          { label: 'Total Earnings', value: `R${stats.totalEarnings.toLocaleString()}`, icon: 'money' },
+          { label: 'Pending Payments', value: `R${stats.pendingPayments.toLocaleString()}`, icon: 'clock' }
         ].map((stat, index) => (
           <Card key={index}>
             <div className="text-center">
-              <div className="text-4xl mb-2">{stat.icon}</div>
+              <div className="mb-2 flex justify-center">
+                <Icon name={stat.icon} className="w-10 h-10 text-primary" />
+              </div>
               <p className="text-sm text-neutral-600 mb-1">{stat.label}</p>
               <p className="text-2xl font-bold text-primary">{stat.value}</p>
             </div>

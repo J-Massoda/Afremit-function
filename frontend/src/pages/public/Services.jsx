@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Button from '../../components/shared/Button';
 import Card from '../../components/shared/Card';
+import Icon from '../../components/shared/Icon';
 
 const Services = () => {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ const Services = () => {
     {
       id: 'construction',
       title: 'Construction Services',
-      icon: '🏗️',
+      icon: 'building',
       description: 'Connect with verified construction companies with milestone-based escrow protection',
       paymentModel: 'Milestone-Based Escrow',
       paymentDescription: 'Service provider sends quote, you approve and deposit first milestone. Funds released as work is completed and approved.',
@@ -35,7 +36,7 @@ const Services = () => {
     {
       id: 'education',
       title: 'Education Services',
-      icon: '📚',
+      icon: 'briefcase',
       description: 'Browse schools across Sub-Saharan Africa and pay tuition fees directly',
       paymentModel: 'Direct Payment',
       paymentDescription: 'Select your school, view tuition fees and payment plans (per semester or full year), and make direct payments to the institution.',
@@ -59,7 +60,7 @@ const Services = () => {
     {
       id: 'healthcare',
       title: 'Healthcare Services',
-      icon: '🏥',
+      icon: 'medical',
       description: 'Access medical services across Sub-Saharan Africa with direct or installment payments',
       paymentModel: 'Direct Payment / Installments',
       paymentDescription: 'Select medical service type and location, view pricing, and pay directly or through installment plans offered by the facility.',
@@ -130,7 +131,9 @@ const Services = () => {
               viewport={{ once: true }}
             >
               <Card className="h-full border-t-4 border-secondary">
-                <div className="text-5xl mb-4">🏗️</div>
+                <div className="mb-4 flex justify-start">
+                  <Icon name="building" className="w-12 h-12 text-secondary" />
+                </div>
                 <h3 className="text-xl font-bold text-primary mb-3">Construction</h3>
                 <div className="bg-secondary-50 rounded-lg p-3 mb-4">
                   <p className="text-sm font-semibold text-secondary">Milestone-Based Escrow</p>
@@ -149,7 +152,9 @@ const Services = () => {
               transition={{ delay: 0.1 }}
             >
               <Card className="h-full border-t-4 border-primary">
-                <div className="text-5xl mb-4">📚</div>
+                <div className="mb-4 flex justify-start">
+                  <Icon name="briefcase" className="w-12 h-12 text-primary" />
+                </div>
                 <h3 className="text-xl font-bold text-primary mb-3">Education</h3>
                 <div className="bg-primary-50 rounded-lg p-3 mb-4">
                   <p className="text-sm font-semibold text-primary">Direct Payment</p>
@@ -168,7 +173,9 @@ const Services = () => {
               transition={{ delay: 0.2 }}
             >
               <Card className="h-full border-t-4 border-accent">
-                <div className="text-5xl mb-4">🏥</div>
+                <div className="mb-4 flex justify-start">
+                  <Icon name="medical" className="w-12 h-12 text-accent" />
+                </div>
                 <h3 className="text-xl font-bold text-primary mb-3">Healthcare</h3>
                 <div className="bg-accent-50 rounded-lg p-3 mb-4">
                   <p className="text-sm font-semibold text-accent">Direct / Installments</p>

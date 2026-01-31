@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import Button from '../../components/shared/Button';
 import Card from '../../components/shared/Card';
+import Icon from '../../components/shared/Icon';
 
 const ConstructionServices = () => {
   return (
@@ -133,19 +134,19 @@ const ConstructionServices = () => {
             {[
               {
                 title: 'Residential Construction',
-                icon: '🏠',
+                icon: 'home',
                 services: ['New home builds', 'Home extensions', 'Kitchen & bathroom renovations', 'Roofing and repairs'],
                 image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=400'
               },
               {
                 title: 'Commercial Projects',
-                icon: '🏢',
+                icon: 'building',
                 services: ['Office buildings', 'Retail spaces', 'Warehouses', 'Restaurant fit-outs'],
                 image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400'
               },
               {
                 title: 'Infrastructure & Trades',
-                icon: '🔧',
+                icon: 'hammer',
                 services: ['Electrical installations', 'Plumbing systems', 'HVAC installations', 'Landscaping works'],
                 image: 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400'
               }
@@ -161,7 +162,9 @@ const ConstructionServices = () => {
                   <div className="aspect-video overflow-hidden rounded-t-xl -m-6 mb-4">
                     <img src={service.image} alt={service.title} className="w-full h-full object-cover hover:scale-110 transition-transform duration-500" />
                   </div>
-                  <div className="text-5xl mb-4">{service.icon}</div>
+                  <div className="mb-4 flex justify-start">
+                    <Icon name={service.icon} className="w-12 h-12 text-secondary" />
+                  </div>
                   <h3 className="text-2xl font-bold text-primary mb-4">{service.title}</h3>
                   <ul className="space-y-2">
                     {service.services.map((item, idx) => (

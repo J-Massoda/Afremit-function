@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Button from '../../components/shared/Button';
 import Card from '../../components/shared/Card';
+import Icon from '../../components/shared/Icon';
 
 const ConfirmationPage = () => {
   const location = useLocation();
@@ -223,8 +224,9 @@ const ConfirmationPage = () => {
             onClick={handleDownloadPolicy}
             variant="primary"
             size="lg"
+            className="flex items-center gap-2"
           >
-            📄 Download Policy Summary
+            <Icon name="download" className="w-5 h-5" /> Download Policy Summary
           </Button>
           
           <Button

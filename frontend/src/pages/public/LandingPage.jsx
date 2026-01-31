@@ -1,8 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import { Link } from 'react-router-dom';
 import Button from '../../components/shared/Button';
 import Card from '../../components/shared/Card';
+import VerificationBadge from '../../components/shared/VerificationBadge';
+import { useAuth } from '../../context/AuthContext';
+import { providersAPI } from '../../services/api';
+import Icon from '../../components/shared/Icon';
 
 const AnimatedSection = ({ children, delay = 0 }) => {
   const controls = useAnimation();
@@ -31,6 +36,29 @@ const AnimatedSection = ({ children, delay = 0 }) => {
 };
 
 const LandingPage = () => {
+  const { isAuthenticated, user } = useAuth();
+  const [verifiedProviders, setVerifiedProviders] = useState([]);
+  const [loadingProviders, setLoadingProviders] = useState(false);
+
+  useEffect(() => {
+    fetchVerifiedProviders();
+  }, []);
+
+  const fetchVerifiedProviders = async () => {
+    try {
+      setLoadingProviders(true);
+      const response = await providersAPI.search({ verifiedOnly: 'true' });
+      // Get top 6 verified providers
+      setVerifiedProviders(response.data.providers.slice(0, 6));
+    } catch (error) {
+      console.error('Failed to fetch verified providers:', error);
+    } finally {
+      setLoadingProviders(false);
+    }
+  };
+
+  const isVerified = user?.state === 'VERIFIED' || user?.state === 'PUBLISHED';
+
   return (
     <div className="overflow-x-hidden">
       {/* Hero Section */}
@@ -96,24 +124,24 @@ const LandingPage = () => {
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                icon: '🏗️',
+                icon: 'building',
                 title: 'Construction Escrow',
                 description: 'Milestone-based escrow protection. Pay as work is completed and approved by you.'
               },
               {
-                icon: '📚',
+                icon: 'briefcase',
                 title: 'Education Payments',
                 description: 'Browse schools across Sub-Saharan Africa. Pay tuition directly per semester or annually.'
               },
               {
-                icon: '🏥',
+                icon: 'medical',
                 title: 'Healthcare Services',
                 description: 'Access medical services. Pay directly or through installment plans from facilities.'
               }
             ].map((feature, index) => (
               <AnimatedSection key={index} delay={index * 0.2}>
                 <Card className="text-center h-full">
-                  <div className="text-6xl mb-4">{feature.icon}</div>
+                  <div className="mb-4 flex justify-center"><Icon name={feature.icon} className="w-16 h-16 text-accent" /></div>
                   <h3 className="text-2xl mb-3">{feature.title}</h3>
                   <p className="text-neutral-600">{feature.description}</p>
                 </Card>
@@ -180,6 +208,139 @@ const LandingPage = () => {
         </div>
       </section>
 
+      {/* Verified Service Providers Section */}
+      <section className="section bg-gradient-to-br from-primary-50 to-secondary-50">
+        <div className="container-custom">
+          <AnimatedSection>
+            <div className="text-center mb-12">
+              <h2 className="mb-4">Verified Service Providers</h2>
+              <p className="text-xl text-neutral-600">
+                Connect with KYC-verified professionals across Sub-Saharan Africa
+              </p>
+            </div>
+          </AnimatedSection>
+
+          {loadingProviders ? (
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {verifiedProviders.map((provider, index) => (
+                <AnimatedSection key={provider.id} delay={index * 0.1}>
+                  <Card hoverable className="h-full">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <h4 className="font-bold text-lg">{provider.businessName}</h4>
+                          {provider.verifiedBadge && (
+                            <VerificationBadge type="provider" size="md" />
+                          )}
+                        </div>
+                        <p className="text-sm text-neutral-500 capitalize">{provider.serviceCategory}</p>
+                      </div>
+                    </div>
+
+                    {provider.rating && (
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="flex">
+                          {[...Array(5)].map((_, i) => (
+                            <svg
+                              key={i}
+                              className={`w-4 h-4 ${i < Math.floor(provider.rating) ? 'text-yellow-400' : 'text-neutral-300'}`}
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                          ))}
+                        </div>
+                        <span className="text-sm text-neutral-600">
+                          {provider.rating.toFixed(1)} ({provider.completedContracts || 0} projects)
+                        </span>
+                      </div>
+                    )}
+
+                    {provider.operatingLocations && provider.operatingLocations.length > 0 && (
+                      <div className="mb-3">
+                        <div className="flex flex-wrap gap-2">
+                          {provider.operatingLocations.slice(0, 2).map((location, idx) => (
+                            <span
+                              key={idx}
+                              className="text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded flex items-center gap-1"
+                            >
+                              <Icon name="location" className="w-3 h-3" /> {location}
+                            </span>
+                          ))}
+                          {provider.operatingLocations.length > 2 && (
+                            <span className="text-xs bg-neutral-100 text-neutral-600 px-2 py-1 rounded">
+                              +{provider.operatingLocations.length - 2} more
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {provider.services && provider.services.length > 0 && (
+                      <div className="mb-4">
+                        <p className="text-xs text-neutral-500 mb-2">Services:</p>
+                        <div className="flex flex-wrap gap-2">
+                          {provider.services.slice(0, 3).map((service, idx) => (
+                            <span
+                              key={idx}
+                              className="text-xs bg-secondary-100 text-secondary-700 px-2 py-1 rounded"
+                            >
+                              {service}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {isAuthenticated && isVerified ? (
+                      <Link to={`/providers/${provider.id}`}>
+                        <Button variant="primary" size="sm" className="w-full">
+                          View Profile
+                        </Button>
+                      </Link>
+                    ) : (
+                      <div>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="w-full cursor-not-allowed opacity-60 flex items-center justify-center gap-2"
+                          disabled
+                        >
+                          <Icon name="lock" className="w-4 h-4" />
+                          {isAuthenticated ? 'Complete KYC to View' : 'Login to View Profile'}
+                        </Button>
+                        {!isAuthenticated && (
+                          <Link to="/signup">
+                            <p className="text-xs text-center text-secondary hover:underline mt-2">
+                              Sign up to connect with providers
+                            </p>
+                          </Link>
+                        )}
+                      </div>
+                    )}
+                  </Card>
+                </AnimatedSection>
+              ))}
+            </div>
+          )}
+
+          {verifiedProviders.length > 0 && (
+            <AnimatedSection delay={0.6}>
+              <div className="text-center mt-12">
+                <Button to="/providers" variant="secondary" size="lg">
+                  View All Verified Providers
+                </Button>
+              </div>
+            </AnimatedSection>
+          )}
+        </div>
+      </section>
+
       {/* Why Choose Us */}
       <section className="section bg-white">
         <div className="container-custom">
@@ -192,37 +353,37 @@ const LandingPage = () => {
               {
                 title: 'KYC Verified Providers',
                 description: 'Construction providers undergo thorough business verification before approval. Schools and hospitals are pre-verified institutions.',
-                icon: '✅'
+                icon: 'check'
               },
               {
                 title: 'User Verification',
                 description: 'Clients complete KYC to access services. Unverified users can browse available providers and institutions.',
-                icon: '🔒'
+                icon: 'lock'
               },
               {
                 title: 'Multiple Payment Options',
                 description: 'Construction uses escrow, education offers direct semester/annual payments, healthcare provides direct or installment options.',
-                icon: '💳'
+                icon: 'creditCard'
               },
               {
                 title: 'Sub-Saharan Africa Focus',
                 description: 'Connecting diaspora and local clients with verified services across Sub-Saharan Africa.',
-                icon: '🌍'
+                icon: 'location'
               },
               {
                 title: 'Insurance Available',
                 description: 'Optional insurance coverage through Zororo Phumulani for added protection on your projects.',
-                icon: '🛡️'
+                icon: 'shield'
               },
               {
                 title: 'Transparent Process',
                 description: 'Track construction milestones or view education/healthcare payment schedules with full visibility.',
-                icon: '💡'
+                icon: 'lightBulb'
               }
             ].map((feature, index) => (
               <AnimatedSection key={index} delay={(index % 3) * 0.15}>
                 <Card hoverable className="h-full">
-                  <div className="text-5xl mb-4">{feature.icon}</div>
+                  <div className="mb-4"><Icon name={feature.icon} className="w-12 h-12 text-accent" /></div>
                   <h4 className="mb-3">{feature.title}</h4>
                   <p className="text-neutral-600">{feature.description}</p>
                 </Card>
@@ -251,13 +412,13 @@ const LandingPage = () => {
                 {/* Benefits List */}
                 <div className="space-y-4 mb-8">
                   {[
-                    { icon: '🛡️', title: 'Funeral Cover', desc: 'Complete funeral arrangements and support' },
-                    { icon: '✈️', title: 'Repatriation', desc: 'Worldwide repatriation services included' },
-                    { icon: '🏥', title: 'Accidental Death', desc: 'Immediate cover for unexpected events' },
-                    { icon: '👨‍👩‍👧‍👦', title: 'Family Coverage', desc: 'Spouse and up to 6 children covered' }
+                    { icon: 'shield', title: 'Funeral Cover', desc: 'Complete funeral arrangements and support' },
+                    { icon: 'airplane', title: 'Repatriation', desc: 'Worldwide repatriation services included' },
+                    { icon: 'medical', title: 'Accidental Death', desc: 'Immediate cover for unexpected events' },
+                    { icon: 'family', title: 'Family Coverage', desc: 'Spouse and up to 6 children covered' }
                   ].map((benefit, index) => (
                     <div key={index} className="flex items-start">
-                      <div className="text-3xl mr-4">{benefit.icon}</div>
+                      <div className="mr-4"><Icon name={benefit.icon} className="w-8 h-8 text-secondary" /></div>
                       <div>
                         <h4 className="font-semibold text-primary mb-1">{benefit.title}</h4>
                         <p className="text-neutral-600">{benefit.desc}</p>

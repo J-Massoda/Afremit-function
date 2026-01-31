@@ -18,7 +18,8 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     // Check if user is logged in
     const storedUser = localStorage.getItem('user');
-    if (storedUser) {
+    const token = localStorage.getItem('token');
+    if (storedUser && token) {
       setUser(JSON.parse(storedUser));
     }
     setLoading(false);
@@ -28,10 +29,18 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await authAPI.login({ email, password });
       const userData = response.data.user;
+      const token = response.data.token;
+      
       setUser(userData);
       localStorage.setItem('user', JSON.stringify(userData));
-      localStorage.setItem('token', response.data.token);
-      return { success: true, user: userData };
+      localStorage.setItem('token', token);
+      
+      return { 
+        success: true, 
+        user: userData,
+        requiresEmailVerification: response.data.requiresEmailVerification,
+        requiresKYC: response.data.requiresKYC
+      };
     } catch (error) {
       return { success: false, error: error.response?.data?.message || 'Login failed' };
     }
@@ -41,12 +50,40 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await authAPI.signup(userData);
       const user = response.data.user;
+      const token = response.data.token;
+      
       setUser(user);
       localStorage.setItem('user', JSON.stringify(user));
-      localStorage.setItem('token', response.data.token);
-      return { success: true, user };
+      localStorage.setItem('token', token);
+      
+      return { 
+        success: true, 
+        user,
+        requiresEmailVerification: response.data.requiresEmailVerification 
+      };
     } catch (error) {
       return { success: false, error: error.response?.data?.message || 'Signup failed' };
+    }
+  };
+
+  const providerApply = async (providerData) => {
+    try {
+      const response = await authAPI.providerApply(providerData);
+      const user = response.data.user;
+      const token = response.data.token;
+      
+      setUser(user);
+      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('token', token);
+      
+      return { 
+        success: true, 
+        user,
+        requiresEmailVerification: response.data.requiresEmailVerification,
+        requiresKYC: response.data.requiresKYC
+      };
+    } catch (error) {
+      return { success: false, error: error.response?.data?.message || 'Application failed' };
     }
   };
 
@@ -54,14 +91,22 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     localStorage.removeItem('user');
     localStorage.removeItem('token');
+    authAPI.logout().catch(() => {}); // Fire and forget
+  };
+
+  const updateUser = (updatedUser) => {
+    setUser(updatedUser);
+    localStorage.setItem('user', JSON.stringify(updatedUser));
   };
 
   const value = {
     user,
+    loading,
     login,
     signup,
+    providerApply,
     logout,
-    loading,
+    updateUser,
     isAuthenticated: !!user,
   };
 

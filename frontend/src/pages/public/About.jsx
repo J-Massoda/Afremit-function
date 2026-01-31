@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import Button from '../../components/shared/Button';
 import Card from '../../components/shared/Card';
+import Icon from '../../components/shared/Icon';
 
 const About = () => {
   const [openFaq, setOpenFaq] = useState(null);
@@ -93,13 +94,13 @@ const About = () => {
             >
               <div className="space-y-6">
                 {[
-                  { icon: '🎯', title: 'Transparency', description: 'Track every milestone and payment' },
-                  { icon: '🔒', title: 'Security', description: 'Escrow-protected transactions' },
-                  { icon: '🤝', title: 'Trust', description: 'Verified service providers' },
-                  { icon: '🌍', title: 'Impact', description: 'Supporting African development' }
+                  { icon: 'target', title: 'Transparency', description: 'Track every milestone and payment' },
+                  { icon: 'lock', title: 'Security', description: 'Escrow-protected transactions' },
+                  { icon: 'users', title: 'Trust', description: 'Verified service providers' },
+                  { icon: 'location', title: 'Impact', description: 'Supporting African development' }
                 ].map((value, index) => (
                   <div key={index} className="flex items-start gap-4">
-                    <div className="text-4xl">{value.icon}</div>
+                    <Icon name={value.icon} className="w-10 h-10 text-accent" />
                     <div>
                       <h4 className="mb-1">{value.title}</h4>
                       <p className="text-neutral-600 text-sm">{value.description}</p>
@@ -121,32 +122,32 @@ const About = () => {
               {
                 title: 'Escrow Protection',
                 description: 'Your funds are held securely until milestones are completed and approved. No upfront payments to providers.',
-                icon: '🛡️'
+                icon: 'shield'
               },
               {
                 title: 'Verified Providers',
                 description: 'All service providers undergo thorough background checks, credential verification, and insurance validation.',
-                icon: '✅'
+                icon: 'check'
               },
               {
                 title: 'Insurance Partnership',
                 description: 'Additional protection through our partnership with Zororo Phumulani Insurance for extra peace of mind.',
-                icon: '🏦'
+                icon: 'bank'
               },
               {
                 title: 'Milestone Approval',
                 description: 'You control when payments are released. Approve only after verifying completed work.',
-                icon: '👁️'
+                icon: 'eye'
               },
               {
                 title: 'Dispute Resolution',
                 description: 'Professional mediation services available if disagreements arise between you and the provider.',
-                icon: '⚖️'
+                icon: 'balance'
               },
               {
                 title: 'Full Transparency',
                 description: 'Track every transaction, milestone, and payment in real-time through your dashboard.',
-                icon: '📊'
+                icon: 'chart'
               }
             ].map((feature, index) => (
               <motion.div
@@ -157,7 +158,9 @@ const About = () => {
                 transition={{ delay: index * 0.1 }}
               >
                 <Card className="h-full text-center">
-                  <div className="text-5xl mb-4">{feature.icon}</div>
+                  <div className="mb-4 flex justify-center">
+                    <Icon name={feature.icon} className="w-12 h-12 text-accent" />
+                  </div>
                   <h4 className="mb-3">{feature.title}</h4>
                   <p className="text-neutral-600">{feature.description}</p>
                 </Card>

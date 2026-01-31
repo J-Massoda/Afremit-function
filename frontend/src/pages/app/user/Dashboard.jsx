@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import Card from '../../../components/shared/Card';
 import Button from '../../../components/shared/Button';
 import Badge from '../../../components/shared/Badge';
+import Icon from '../../../components/shared/Icon';
 import { contractsAPI } from '../../../services/api';
 
 const Dashboard = () => {
@@ -77,17 +78,17 @@ const Dashboard = () => {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-primary mb-2">Welcome Back! 👋</h1>
+        <h1 className="text-4xl font-bold text-primary mb-2">Welcome Back!</h1>
         <p className="text-neutral-600">Manage your construction projects and payments</p>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {[
-          { label: 'Active Contracts', value: stats.active, icon: '📄', color: 'secondary' },
-          { label: 'Completed Projects', value: stats.completed, icon: '✅', color: 'success' },
-          { label: 'Total Value', value: `R${stats.totalAmount.toLocaleString()}`, icon: '💰', color: 'accent' },
-          { label: 'In Escrow', value: `R${stats.inEscrow.toLocaleString()}`, icon: '🔒', color: 'primary' }
+          { label: 'Active Contracts', value: stats.active, icon: 'document', color: 'secondary' },
+          { label: 'Completed Projects', value: stats.completed, icon: 'check', color: 'success' },
+          { label: 'Total Value', value: `R${stats.totalAmount.toLocaleString()}`, icon: 'money', color: 'accent' },
+          { label: 'In Escrow', value: `R${stats.inEscrow.toLocaleString()}`, icon: 'lock', color: 'primary' }
         ].map((stat, index) => (
           <motion.div key={index} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.1 }}>
             <Card>
@@ -96,7 +97,7 @@ const Dashboard = () => {
                   <p className="text-sm text-neutral-600 mb-1">{stat.label}</p>
                   <p className="text-3xl font-bold text-primary">{stat.value}</p>
                 </div>
-                <div className="text-4xl">{stat.icon}</div>
+                <Icon name={stat.icon} className="w-10 h-10 text-primary" />
               </div>
             </Card>
           </motion.div>
@@ -107,14 +108,14 @@ const Dashboard = () => {
       <Card className="mb-8">
         <h3 className="text-xl font-bold mb-4">Quick Actions</h3>
         <div className="flex flex-wrap gap-4">
-          <Button to="/client/create-contract" variant="primary">
-            ➕ Create New Contract
+          <Button to="/client/create-contract" variant="primary" className="flex items-center gap-2">
+            <Icon name="plus" className="w-4 h-4" /> Create New Contract
           </Button>
-          <Button variant="outline">
-            📊 View All Contracts
+          <Button variant="outline" className="flex items-center gap-2">
+            <Icon name="dashboard" className="w-4 h-4" /> View All Contracts
           </Button>
-          <Button variant="ghost">
-            👥 Find Service Providers
+          <Button variant="ghost" className="flex items-center gap-2">
+            <Icon name="users" className="w-4 h-4" /> Find Service Providers
           </Button>
         </div>
       </Card>
@@ -132,7 +133,9 @@ const Dashboard = () => {
           <Card><p className="text-center text-neutral-600">Loading...</p></Card>
         ) : contracts.length === 0 ? (
           <Card className="text-center py-12">
-            <div className="text-6xl mb-4">📄</div>
+            <div className="mb-4 flex justify-center">
+              <Icon name="document" className="w-16 h-16 text-neutral-400" />
+            </div>
             <h3 className="text-xl font-bold mb-2">No Contracts Yet</h3>
             <p className="text-neutral-600 mb-6">Start by creating your first construction contract</p>
             <Button to="/client/create-contract" variant="primary">

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Card from '../../../components/shared/Card';
 import Button from '../../../components/shared/Button';
 import Badge from '../../../components/shared/Badge';
+import Icon from '../../../components/shared/Icon';
 
 const AdminDashboard = () => {
   const [providers, setProviders] = useState([
@@ -15,19 +16,21 @@ const AdminDashboard = () => {
 
   return (
     <div>
-      <h1 className="text-4xl font-bold text-primary mb-8">Admin Dashboard 👨‍💼</h1>
+      <h1 className="text-4xl font-bold text-primary mb-8">Admin Dashboard</h1>
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         {[
-          { label: 'Total Users', value: '1,234', icon: '👥' },
-          { label: 'Active Contracts', value: '45', icon: '📄' },
-          { label: 'Total Escrow', value: 'R12.5M', icon: '💰' },
-          { label: 'Pending Approvals', value: '8', icon: '⏳' }
+          { label: 'Total Users', value: '1,234', icon: 'users' },
+          { label: 'Active Contracts', value: '45', icon: 'document' },
+          { label: 'Total Escrow', value: 'R12.5M', icon: 'money' },
+          { label: 'Pending Approvals', value: '8', icon: 'clock' }
         ].map((stat, index) => (
           <Card key={index}>
             <div className="text-center">
-              <div className="text-4xl mb-2">{stat.icon}</div>
+              <div className="mb-2 flex justify-center">
+                <Icon name={stat.icon} className="w-10 h-10 text-primary" />
+              </div>
               <p className="text-sm text-neutral-600 mb-1">{stat.label}</p>
               <p className="text-2xl font-bold text-primary">{stat.value}</p>
             </div>
@@ -47,11 +50,11 @@ const AdminDashboard = () => {
                   <p className="text-sm text-neutral-600">{provider.email}</p>
                 </div>
                 <div className="flex gap-2">
-                  <Button size="sm" variant="primary" onClick={() => handleApproveProvider(provider.id)}>
-                    ✅ Approve
+                  <Button size="sm" variant="primary" onClick={() => handleApproveProvider(provider.id)} className="flex items-center gap-2">
+                    <Icon name="check" className="w-4 h-4" /> Approve
                   </Button>
                   <Button size="sm" variant="outline">
-                    ❌ Reject
+                    Reject
                   </Button>
                 </div>
               </div>

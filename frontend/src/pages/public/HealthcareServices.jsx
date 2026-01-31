@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import Button from '../../components/shared/Button';
 import Card from '../../components/shared/Card';
+import Icon from '../../components/shared/Icon';
 
 const HealthcareServices = () => {
   return (
@@ -133,19 +134,19 @@ const HealthcareServices = () => {
             {[
               {
                 title: 'General Healthcare',
-                icon: '🏥',
+                icon: 'medical',
                 services: ['Routine consultations', 'Diagnostic tests', 'Prescriptions', 'Vaccinations'],
                 image: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=400'
               },
               {
                 title: 'Specialized Treatment',
-                icon: '⚕️',
+                icon: 'medical',
                 services: ['Surgical procedures', 'Chronic disease care', 'Physiotherapy', 'Mental health services'],
                 image: 'https://images.unsplash.com/photo-1551076805-e1869033e561?w=400'
               },
               {
                 title: 'Emergency Services',
-                icon: '🚑',
+                icon: 'medical',
                 services: ['Emergency care', 'Urgent treatment', 'Ambulance services', 'Critical care'],
                 image: 'https://images.unsplash.com/photo-1504439904031-93ded9f93e4e?w=400'
               }
@@ -161,7 +162,9 @@ const HealthcareServices = () => {
                   <div className="aspect-video overflow-hidden rounded-t-xl -m-6 mb-4">
                     <img src={service.image} alt={service.title} className="w-full h-full object-cover hover:scale-110 transition-transform duration-500" />
                   </div>
-                  <div className="text-5xl mb-4">{service.icon}</div>
+                  <div className="mb-4 flex justify-start">
+                    <Icon name={service.icon} className="w-12 h-12 text-accent" />
+                  </div>
                   <h3 className="text-2xl font-bold text-primary mb-4">{service.title}</h3>
                   <ul className="space-y-2">
                     {service.services.map((item, idx) => (
@@ -200,7 +203,9 @@ const HealthcareServices = () => {
               viewport={{ once: true }}
             >
               <Card className="text-center h-full bg-primary-50">
-                <div className="text-5xl mb-4">💳</div>
+                <div className="mb-4 flex justify-center">
+                  <Icon name="creditCard" className="w-12 h-12 text-accent" />
+                </div>
                 <h3 className="text-2xl font-bold text-primary mb-4">Direct Payment</h3>
                 <p className="text-neutral-700 mb-6">
                   Pay the full amount upfront for immediate treatment
@@ -234,7 +239,9 @@ const HealthcareServices = () => {
               viewport={{ once: true }}
             >
               <Card className="text-center h-full bg-secondary-50">
-                <div className="text-5xl mb-4">📊</div>
+                <div className="mb-4 flex justify-center">
+                  <Icon name="chart" className="w-12 h-12 text-accent" />
+                </div>
                 <h3 className="text-2xl font-bold text-primary mb-4">Installment Plans</h3>
                 <p className="text-neutral-700 mb-6">
                   Spread payments over time for major medical expenses

@@ -4,10 +4,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Button from './Button';
 import { useAuth } from '../../context/AuthContext';
 import VerificationBadge from './VerificationBadge';
+import Icon from './Icon';
 
 const Navigation = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [businessDropdownOpen, setBusinessDropdownOpen] = useState(false);
+  const [mobileBusinessOpen, setMobileBusinessOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -234,7 +236,64 @@ const Navigation = () => {
               className="md:hidden overflow-hidden"
             >
               <div className="py-4 space-y-4">
-                <Link to="/services" className="block py-2 hover:text-secondary">Business</Link>
+                {/* Business Dropdown */}
+                <div>
+                  <button 
+                    onClick={() => setMobileBusinessOpen(!mobileBusinessOpen)}
+                    className="flex items-center justify-between w-full py-2 hover:text-secondary"
+                  >
+                    <span>Business</span>
+                    <svg 
+                      className={`w-4 h-4 transition-transform ${mobileBusinessOpen ? 'rotate-180' : ''}`}
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  <AnimatePresence>
+                    {mobileBusinessOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden pl-4 space-y-2 mt-2"
+                      >
+                        <Link 
+                          to="/services/construction" 
+                          className="block py-2 text-sm hover:text-secondary"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          Construction Services
+                        </Link>
+                        <Link 
+                          to="/services/education" 
+                          className="block py-2 text-sm hover:text-secondary"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          Education Services
+                        </Link>
+                        <Link 
+                          to="/services/healthcare" 
+                          className="block py-2 text-sm hover:text-secondary"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          Healthcare Services
+                        </Link>
+                        <div className="border-t border-neutral-700 my-2"></div>
+                        <Link 
+                          to="/insurance/zororo-phumulani" 
+                          className="block py-2 text-sm hover:text-secondary"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          Zororo Phumulani Insurance
+                        </Link>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+                
                 <Link to="/how-it-works" className="block py-2 hover:text-secondary">How It Works</Link>
                 <Link to="/about" className="block py-2 hover:text-secondary">About Us</Link>
                 

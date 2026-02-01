@@ -7,6 +7,8 @@ import Button from '../../components/shared/Button';
 import Card from '../../components/shared/Card';
 import VerificationBadge from '../../components/shared/VerificationBadge';
 import Icon from '../../components/shared/Icon';
+import RequestQuoteModal from '../../components/shared/RequestQuoteModal';
+import ChatBox from '../../components/shared/ChatBox';
 
 const ProviderProfile = () => {
   const { id } = useParams();
@@ -15,8 +17,20 @@ const ProviderProfile = () => {
   const [provider, setProvider] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showQuoteModal, setShowQuoteModal] = useState(false);
+  const [showChat, setShowChat] = useState(false);
+  const [showBlueprintDisclaimer, setShowBlueprintDisclaimer] = useState(false);
 
   const isVerified = user?.state === 'VERIFIED' || user?.state === 'PUBLISHED';
+  
+  // Determine service type
+  const isConstructionService = provider?.serviceCategory?.toLowerCase() === 'construction';
+  const isEducationService = provider?.serviceCategory?.toLowerCase() === 'education';
+  const isHealthcareService = provider?.serviceCategory?.toLowerCase() === 'healthcare' || 
+                              provider?.serviceCategory?.toLowerCase() === 'medical';
+  
+  // Construction requires quote/escrow, Education/Healthcare use chat
+  const requiresQuoteFlow = isConstructionService;
 
   useEffect(() => {
     fetchProviderProfile();
@@ -141,15 +155,38 @@ const ProviderProfile = () => {
               <div className="space-y-3">
                 {isAuthenticated && isVerified ? (
                   <>
-                    <Button variant="primary" size="lg" className="w-full md:w-auto">
-                      Request a Quote
-                    </Button>
-                    {provider.canContact && provider.phoneNumber && (
-                      <div className="text-sm text-neutral-600">
-                        <p className="font-semibold">Contact:</p>
-                        <p className="flex items-center gap-2"><Icon name="phone" className="w-4 h-4" /> {provider.phoneNumber}</p>
-                        <p className="flex items-center gap-2"><Icon name="mail" className="w-4 h-4" /> {provider.email}</p>
-                      </div>
+                    {requiresQuoteFlow ? (
+                      <>
+                        <Button 
+                          variant="primary" 
+                          size="lg" 
+                          className="w-full md:w-auto"
+                          onClick={() => setShowBlueprintDisclaimer(true)}
+                        >
+                          Request a Quote
+                        </Button>
+                        <Button
+                          variant="secondary"
+                          size="lg"
+                          className="w-full md:w-auto"
+                          onClick={() => setShowChat(true)}
+                        >
+                          <Icon name="chat" className="w-5 h-5" />
+                          Start Chat
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Button
+                          variant="primary"
+                          size="lg"
+                          className="w-full md:w-auto"
+                          onClick={() => setShowChat(true)}
+                        >
+                          <Icon name="chat" className="w-5 h-5" />
+                          Contact Provider
+                        </Button>
+                      </>
                     )}
                   </>
                 ) : (
@@ -161,7 +198,7 @@ const ProviderProfile = () => {
                       className="w-full md:w-auto cursor-not-allowed opacity-60 flex items-center justify-center gap-2"
                     >
                       <Icon name="lock" className="w-5 h-5" />
-                      {!isAuthenticated ? 'Login to Request Quote' : 'Complete KYC to Request Quote'}
+                      {!isAuthenticated ? 'Login to Contact Provider' : 'Complete KYC to Contact Provider'}
                     </Button>
                     {!isAuthenticated ? (
                       <Link to="/signup">
@@ -172,7 +209,7 @@ const ProviderProfile = () => {
                     ) : (
                       <Link to={user?.role === 'provider' ? '/provider/kyc' : '/client/kyc'}>
                         <p className="text-sm text-center text-secondary hover:underline mt-2">
-                          Complete verification to request quotes
+                          Complete verification to contact providers
                         </p>
                       </Link>
                     )}
@@ -207,6 +244,93 @@ const ProviderProfile = () => {
                     ))}
                   </div>
                 </Card>
+              )}
+
+              {/* Education-specific content */}
+              {isEducationService && provider.educationDetails && (
+                <>
+                  <Card>
+                    <h3 className="text-xl font-bold text-primary mb-4">Courses & Programs</h3>
+                    <div className="space-y-4">
+                      {provider.educationDetails.courses?.map((course, index) => (
+                        <div key={index} className="border-b border-neutral-200 pb-4 last:border-0">
+                          <h4 className="font-semibold text-neutral-800">{course.name}</h4>
+                          <p className="text-sm text-neutral-600 mt-1">{course.description}</p>
+                          {course.duration && (
+                            <p className="text-sm text-secondary mt-2">Duration: {course.duration}</p>
+                          )}
+                          {course.fee && (
+                            <p className="text-sm font-bold text-primary mt-1">Fee: ${course.fee}</p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+
+                  {provider.educationDetails.paymentStructure && (
+                    <Card>
+                      <h3 className="text-xl font-bold text-primary mb-4">Payment Structure</h3>
+                      <div className="space-y-2">
+                        {provider.educationDetails.paymentStructure.map((option, index) => (
+                          <div key={index} className="flex justify-between items-center py-2 border-b border-neutral-100">
+                            <span className="text-neutral-700">{option.type}</span>
+                            <span className="font-semibold text-primary">{option.details}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+                  )}
+                </>
+              )}
+
+              {/* Healthcare-specific content */}
+              {isHealthcareService && provider.healthcareDetails && (
+                <>
+                  <Card>
+                    <h3 className="text-xl font-bold text-primary mb-4">Medical Services</h3>
+                    <div className="space-y-3">
+                      {provider.healthcareDetails.specializations?.map((spec, index) => (
+                        <div key={index} className="flex items-start gap-3">
+                          <Icon name="medical" className="w-5 h-5 text-secondary flex-shrink-0 mt-1" />
+                          <div>
+                            <h4 className="font-semibold text-neutral-800">{spec.name}</h4>
+                            {spec.description && (
+                              <p className="text-sm text-neutral-600">{spec.description}</p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+
+                  {provider.healthcareDetails.consultationFees && (
+                    <Card>
+                      <h3 className="text-xl font-bold text-primary mb-4">Consultation Fees</h3>
+                      <div className="space-y-2">
+                        {provider.healthcareDetails.consultationFees.map((fee, index) => (
+                          <div key={index} className="flex justify-between items-center py-2 border-b border-neutral-100">
+                            <span className="text-neutral-700">{fee.type}</span>
+                            <span className="font-semibold text-primary">${fee.amount}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+                  )}
+
+                  {provider.healthcareDetails.operatingHours && (
+                    <Card>
+                      <h3 className="text-xl font-bold text-primary mb-4">Operating Hours</h3>
+                      <div className="space-y-2 text-sm">
+                        {Object.entries(provider.healthcareDetails.operatingHours).map(([day, hours]) => (
+                          <div key={day} className="flex justify-between">
+                            <span className="text-neutral-700 capitalize">{day}</span>
+                            <span className="font-semibold text-neutral-800">{hours}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+                  )}
+                </>
               )}
             </div>
 
@@ -256,6 +380,102 @@ const ProviderProfile = () => {
             </div>
           </div>
         </motion.div>
+
+        {/* Blueprint Disclaimer Modal for Construction */}
+        {showBlueprintDisclaimer && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50"
+            onClick={() => setShowBlueprintDisclaimer(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-start gap-4 mb-4">
+                <div className="bg-yellow-100 p-3 rounded-full">
+                  <Icon name="warning" className="w-8 h-8 text-yellow-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold text-primary mb-2">Blueprint Required</h3>
+                  <p className="text-neutral-700">
+                    Before engaging with construction service providers, please ensure you have:
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-neutral-50 rounded-lg p-4 mb-6 space-y-3">
+                <div className="flex items-start gap-3">
+                  <div className="bg-secondary text-white rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 text-sm font-bold">
+                    1
+                  </div>
+                  <p className="text-neutral-700">
+                    <strong>Detailed Blueprints or Architectural Plans</strong> - Professional drawings showing dimensions, specifications, and design requirements
+                  </p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="bg-secondary text-white rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 text-sm font-bold">
+                    2
+                  </div>
+                  <p className="text-neutral-700">
+                    <strong>Project Scope Document</strong> - Clear description of work to be done, materials required, and timeline expectations
+                  </p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="bg-secondary text-white rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 text-sm font-bold">
+                    3
+                  </div>
+                  <p className="text-neutral-700">
+                    <strong>Budget Estimate</strong> - Realistic budget range for your project
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                <p className="text-sm text-blue-800">
+                  <strong>Note:</strong> Having detailed plans helps providers give accurate quotes and ensures project success. Incomplete information may result in delays and cost overruns.
+                </p>
+              </div>
+
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => setShowBlueprintDisclaimer(false)}
+                >
+                  I'll Prepare Plans
+                </Button>
+                <Button
+                  variant="primary"
+                  className="flex-1"
+                  onClick={() => {
+                    setShowBlueprintDisclaimer(false);
+                    setShowQuoteModal(true);
+                  }}
+                >
+                  I Have Plans, Continue
+                </Button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+        {/* Request Quote Modal - Only for Construction */}
+        {showQuoteModal && requiresQuoteFlow && (
+          <RequestQuoteModal
+            isOpen={showQuoteModal}
+            onClose={() => setShowQuoteModal(false)}
+            provider={provider}
+          />
+        )}
+
+        {/* Chat Box - For all communications */}
+        <ChatBox
+          provider={provider}
+          isOpen={showChat}
+          onClose={() => setShowChat(false)}
+        />
       </div>
     </div>
   );

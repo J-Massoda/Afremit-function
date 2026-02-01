@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
 import Input from '../../components/shared/Input';
 import Button from '../../components/shared/Button';
+import { getDemoCredentials } from '../../mock/users';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -124,11 +125,12 @@ const Login = () => {
 
         {/* Demo Credentials */}
         <div className="mt-6 bg-white/10 backdrop-blur-sm rounded-lg p-4 text-white text-sm">
-          <p className="font-semibold mb-2">Demo Credentials:</p>
+          <p className="font-semibold mb-2">🎭 Demo Credentials:</p>
           <div className="space-y-1 text-xs">
-            <p>Client: client@demo.com / password123</p>
-            <p>Provider: provider@demo.com / password123</p>
-            <p>Admin: admin@demo.com / password123</p>
+            <p>✅ Verified Client: <strong>client@demo.com</strong> / demo123</p>
+            <p>⏳ Unverified Client: <strong>client-unverified@demo.com</strong> / demo123</p>
+            <p>✅ Verified Provider: <strong>provider@demo.com</strong> / demo123</p>
+            <p>👨‍💼 Admin: <strong>admin@demo.com</strong> / admin123</p>
           </div>
         </div>
       </motion.div>

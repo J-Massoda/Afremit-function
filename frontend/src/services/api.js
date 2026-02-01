@@ -1,6 +1,9 @@
 import axios from 'axios';
+import { searchProviders, getProviderById } from '../mock/providers';
+import { mockLogin, mockSignup } from '../mock/users';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' || true; // Default to true for demo
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -20,8 +23,42 @@ api.interceptors.request.use((config) => {
 
 // Auth API
 export const authAPI = {
-  login: (credentials) => api.post('/auth/login', credentials),
-  signup: (userData) => api.post('/auth/signup', userData),
+  login: async (credentials) => {
+    // Use mock authentication if enabled or if API fails
+    if (USE_MOCK_DATA) {
+      try {
+        return await mockLogin(credentials.email, credentials.password);
+      } catch (error) {
+        throw error;
+      }
+    }
+    
+    try {
+      return await api.post('/auth/login', credentials);
+    } catch (error) {
+      // Fallback to mock on API failure
+      console.warn('API unavailable, using mock authentication');
+      return await mockLogin(credentials.email, credentials.password);
+    }
+  },
+  
+  signup: async (userData) => {
+    if (USE_MOCK_DATA) {
+      try {
+        return await mockSignup(userData);
+      } catch (error) {
+        throw error;
+      }
+    }
+    
+    try {
+      return await api.post('/auth/signup', userData);
+    } catch (error) {
+      console.warn('API unavailable, using mock signup');
+      return await mockSignup(userData);
+    }
+  },
+  
   providerApply: (providerData) => api.post('/auth/provider/apply', providerData),
   verifyEmail: (token) => api.get(`/auth/verify-email/${token}`),
   resendVerification: () => api.post('/auth/resend-verification'),
@@ -79,8 +116,55 @@ export const constructionAPI = {
 
 // Providers API
 export const providersAPI = {
-  search: (params) => api.get('/providers', { params }),
-  getById: (providerId) => api.get(`/providers/${providerId}`),
+  search: async (params) => {
+    // Use mock data if backend is unavailable or in demo mode
+    if (USE_MOCK_DATA) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          const providers = searchProviders(params);
+          resolve({ data: { providers, total: providers.length } });
+        }, 300); // Simulate network delay
+      });
+    }
+    
+    try {
+      return await api.get('/providers', { params });
+    } catch (error) {
+      // Fallback to mock data if API fails
+      console.warn('API unavailable, using mock data');
+      const providers = searchProviders(params);
+      return { data: { providers, total: providers.length } };
+    }
+  },
+  
+  getById: async (providerId) => {
+    // Use mock data if backend is unavailable or in demo mode
+    if (USE_MOCK_DATA) {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          const provider = getProviderById(providerId);
+          if (provider) {
+            resolve({ data: { provider } });
+          } else {
+            reject({ response: { data: { message: 'Provider not found' } } });
+          }
+        }, 300);
+      });
+    }
+    
+    try {
+      return await api.get(`/providers/${providerId}`);
+    } catch (error) {
+      // Fallback to mock data if API fails
+      console.warn('API unavailable, using mock data');
+      const provider = getProviderById(providerId);
+      if (provider) {
+        return { data: { provider } };
+      }
+      throw error;
+    }
+  },
+  
   getReviews: (providerId) => api.get(`/providers/${providerId}/reviews`),
 };
 

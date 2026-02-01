@@ -92,6 +92,7 @@ function App() {
               <Route path="/provider-signup" element={<ProviderWaitingList />} />
               <Route path="/client-signup" element={<ClientWaitingList />} />
               <Route path="/providers" element={<ProviderDirectory />} />
+              <Route path="/providers/search" element={<ProviderDirectory />} />
               <Route path="/providers/:id" element={<ProviderProfile />} />
               
               {/* Insurance Routes */}

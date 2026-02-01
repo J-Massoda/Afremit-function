@@ -97,8 +97,8 @@ const LandingPage = () => {
               transition={{ duration: 0.8, delay: 0.4 }}
               className="flex flex-col sm:flex-row gap-4 justify-center"
             >
-              <Button to="/client-signup" variant="secondary" size="lg">
-                Join Waiting List
+              <Button to="/providers/search" variant="secondary" size="lg">
+                Find Service Providers
               </Button>
               <Button to="/how-it-works" variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-primary">
                 Learn How It Works

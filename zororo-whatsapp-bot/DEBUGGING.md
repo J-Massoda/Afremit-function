@@ -196,7 +196,7 @@ https://your-app-name.onrender.com/test-send?to=YOUR_PHONE_NUMBER&message=Test
 
 **Example:**
 ```
-https://zororo-whatsapp-bot.onrender.com/test-send?to=263771234567&message=Hello
+https://zororo-whatsapp-bot-1.onrender.com/test-send?to=263771234567&message=Hello
 ```
 
 **Success response:**

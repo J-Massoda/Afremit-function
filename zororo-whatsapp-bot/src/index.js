@@ -91,33 +91,84 @@ app.get('/webhook', (req, res) => {
  * }
  */
 app.post('/webhook', async (req, res) => {
-  console.log('📨 Incoming webhook data:');
-  console.log(JSON.stringify(req.body, null, 2)); // Log full payload for debugging
+  console.log('\n========================================');
+  console.log('📨 INCOMING WEBHOOK REQUEST');
+  console.log('========================================');
+  console.log('Timestamp:', new Date().toISOString());
+  console.log('Headers:', JSON.stringify(req.headers, null, 2));
+  console.log('\n📦 Full Payload:');
+  console.log(JSON.stringify(req.body, null, 2));
+  console.log('========================================\n');
 
   try {
     // Quick acknowledgment to Meta (must respond within 20 seconds)
     res.status(200).send('EVENT_RECEIVED');
+    console.log('✅ Sent acknowledgment to Meta\n');
+
+    // Check if body exists
+    if (!req.body) {
+      console.log('⚠️  No request body received!');
+      return;
+    }
+
+    // Check if it's a WhatsApp Business Account webhook
+    if (req.body.object !== 'whatsapp_business_account') {
+      console.log('⚠️  Not a WhatsApp Business Account webhook');
+      console.log('   Object type:', req.body.object);
+      return;
+    }
 
     // Extract message data from Meta's nested structure
+    console.log('🔍 Parsing payload structure...');
+    
     const entry = req.body.entry?.[0];
+    console.log('Entry exists?', !!entry);
+    
     const changes = entry?.changes?.[0];
+    console.log('Changes exists?', !!changes);
+    
     const value = changes?.value;
+    console.log('Value exists?', !!value);
+    console.log('Value content:', JSON.stringify(value, null, 2));
+    
     const messages = value?.messages;
+    console.log('Messages exists?', !!messages);
+    console.log('Messages count:', messages?.length || 0);
 
     // Check if this webhook contains a message
     if (!messages || messages.length === 0) {
-      console.log('⚠️  Webhook received but no messages found (might be status update)');
+      console.log('⚠️  Webhook received but no messages found');
+      console.log('   This might be a status update (delivered, read, etc.)');
+      
+      // Check for statuses instead
+      if (value?.statuses) {
+        console.log('📊 Status update received:', JSON.stringify(value.statuses, null, 2));
+      }
       return;
     }
 
     const message = messages[0];
+    console.log('\n📝 Message object:', JSON.stringify(message, null, 2));
+    
     const from = message.from; // Sender's WhatsApp number (e.g., "263771234567")
+    const messageType = message.type; // text, image, audio, etc.
     const messageBody = message.text?.body; // Message text
     const messageId = message.id; // Unique message ID
 
-    console.log(`\n📱 New message from: ${from}`);
-    console.log(`💬 Message: "${messageBody}"`);
-    console.log(`🆔 Message ID: ${messageId}\n`);
+    console.log(`\n📱 ===== NEW MESSAGE =====`);
+    console.log(`From: ${from}`);
+    console.log(`Type: ${messageType}`);
+    console.log(`Message: "${messageBody}"`);
+    console.log(`ID: ${messageId}`);
+    console.log(`========================\n`);
+
+    // Check message type
+    if (messageType !== 'text') {
+      console.log(`⚠️  Message type "${messageType}" not supported yet`);
+      console.log('   Only text messages are handled currently');
+      await sendMessage(from, 'Sorry, I can only process text messages at the moment. Please send a text message.');
+      return;
+    }
 
     // Ignore empty messages
     if (!messageBody) {
@@ -126,17 +177,28 @@ app.post('/webhook', async (req, res) => {
     }
 
     // Process message through conversation handler
+    console.log('🤖 Processing message through conversation handler...');
     const reply = await handleIncomingMessage(from, messageBody);
 
     // Send response back to user
     if (reply) {
-      await sendMessage(from, reply);
-      console.log(`✅ Reply sent to ${from}\n`);
+      console.log('📤 Sending reply...');
+      const sendResult = await sendMessage(from, reply);
+      
+      if (sendResult) {
+        console.log(`✅ Reply sent successfully to ${from}\n`);
+      } else {
+        console.log(`❌ Failed to send reply to ${from}\n`);
+      }
+    } else {
+      console.log('⚠️  No reply generated from conversation handler');
     }
 
   } catch (error) {
-    console.error('❌ Error processing webhook:', error.message);
+    console.error('\n❌ ===== ERROR =====');
+    console.error('Error processing webhook:', error.message);
     console.error('Stack trace:', error.stack);
+    console.error('==================\n');
   }
 });
 
@@ -152,8 +214,52 @@ app.get('/health', (req, res) => {
     status: 'ok',
     service: 'Zororo Phumulani WhatsApp Bot',
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development'
+    environment: process.env.NODE_ENV || 'development',
+    config: {
+      hasAccessToken: !!process.env.ACCESS_TOKEN,
+      hasPhoneNumberId: !!process.env.PHONE_NUMBER_ID,
+      hasVerifyToken: !!process.env.VERIFY_TOKEN,
+      accessTokenPreview: process.env.ACCESS_TOKEN ? process.env.ACCESS_TOKEN.substring(0, 20) + '...' : 'NOT SET',
+      phoneNumberId: process.env.PHONE_NUMBER_ID || 'NOT SET'
+    }
   });
+});
+
+// ==============================================================================
+// TEST MESSAGE ENDPOINT (for debugging)
+// ==============================================================================
+/**
+ * Manually test sending a message
+ * Visit: http://your-url.com/test-send?to=263771234567&message=Hello
+ */
+app.get('/test-send', async (req, res) => {
+  const to = req.query.to;
+  const message = req.query.message || 'Test message from Zororo Bot';
+  
+  if (!to) {
+    return res.status(400).json({
+      error: 'Missing "to" parameter',
+      usage: '/test-send?to=263771234567&message=Hello'
+    });
+  }
+  
+  console.log(`\n🧪 TEST: Sending message to ${to}`);
+  const result = await sendMessage(to, message);
+  
+  if (result) {
+    res.json({
+      success: true,
+      message: 'Message sent successfully',
+      to: to,
+      result: result
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to send message',
+      to: to
+    });
+  }
 });
 
 // ==============================================================================

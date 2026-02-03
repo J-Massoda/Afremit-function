@@ -71,11 +71,11 @@ git push -u origin main
 Click **"Advanced"** → **"Add Environment Variable"**
 
 ```
-ACCESS_TOKEN = YOUR_PERMANENT_SYSTEM_USER_TOKEN
-PHONE_NUMBER_ID = YOUR_PHONE_NUMBER_ID
-VERIFY_TOKEN = YOUR_SECRET_VERIFY_TOKEN
-PORT = 10000
-NODE_ENV = production
+ACCESS_TOKEN = EAAqwABFuR68BQvVvmKkvezeBeYUieEblNeHmT2Cm7qfsaiLkEMPt4RW70TbRWzBa4Ca0bioUJF46yDJavK9pmd5SaGsJZCADjP9XQsDZCMMsMsZBKu7rW9V5EVQ11nnXIRbZAf3GaOPLoIThuS5XuZAhhVle2gd27L5JYv87WAJ7MVIZCoziZAoT9DDcc2BhA9MBkePbyccVCH5ATNoqxzwkgZCMNjq9nKAJW0c9ruVtisghrBd4YHq3DQGaixq4WaaAD2PtSC2bvRDO08QsrZCqqu1ZAcXS3e1fTEhAZDZD
+PHONE_NUMBER_ID = 1033642026488027
+VERIFY_TOKEN = ZORORO_VERIFY_TOKEN
+PORT = 3000
+NODE_ENV = development
 ```
 
 ⚠️ **Important:** Use **System User Token** not temporary token!
@@ -83,11 +83,11 @@ NODE_ENV = production
 **5. Deploy:**
 - Click **"Create Web Service"**
 - Wait 2-3 minutes for build
-- You'll get URL like: `https://zororo-whatsapp-bot.onrender.com`
+- You'll get URL like: `https://zororo-whatsapp-bot-1.onrender.com`
 
 **6. Update Meta Webhook:**
 - Go to Meta Dashboard → WhatsApp → Configuration → Webhooks
-- Update Callback URL to: `https://zororo-whatsapp-bot.onrender.com/webhook`
+- Update Callback URL to: `https://zororo-whatsapp-bot-1.onrender.com/webhook`
 - Verify and save
 
 ✅ **You're live!**

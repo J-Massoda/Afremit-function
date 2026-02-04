@@ -295,24 +295,30 @@ app.get('/', (req, res) => {
 });
 
 // ==============================================================================
-// START SERVER
+// START SERVER (Local Development Only)
 // ==============================================================================
-app.listen(PORT, () => {
-  console.log('\n🚀 ============================================');
-  console.log('   ZORORO PHUMULANI WHATSAPP BOT STARTED');
-  console.log('============================================');
-  console.log(`📡 Server running on: http://localhost:${PORT}`);
-  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log('\n📋 Next Steps for Testing:');
-  console.log('1. Run: npx ngrok http 3000');
-  console.log('2. Copy ngrok HTTPS URL');
-  console.log('3. Paste in Meta Dashboard → Webhooks → Callback URL');
-  console.log('4. Add "/webhook" to the end of URL');
-  console.log('5. Verify webhook using VERIFY_TOKEN from .env');
-  console.log('6. Send test message from WhatsApp!');
-  console.log('\n💡 Visit http://localhost:3000 for setup guide');
-  console.log('============================================\n');
-});
+// For Vercel serverless, we export the app instead of listening
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log('\n🚀 ============================================');
+    console.log('   ZORORO PHUMULANI WHATSAPP BOT STARTED');
+    console.log('============================================');
+    console.log(`📡 Server running on: http://localhost:${PORT}`);
+    console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log('\n📋 Next Steps for Testing:');
+    console.log('1. Run: npx ngrok http 3000');
+    console.log('2. Copy ngrok HTTPS URL');
+    console.log('3. Paste in Meta Dashboard → Webhooks → Callback URL');
+    console.log('4. Add "/webhook" to the end of URL');
+    console.log('5. Verify webhook using VERIFY_TOKEN from .env');
+    console.log('6. Send test message from WhatsApp!');
+    console.log('\n💡 Visit http://localhost:3000 for setup guide');
+    console.log('============================================\n');
+  });
+}
+
+// Export for Vercel serverless deployment
+module.exports = app;
 
 // ==============================================================================
 // PRODUCTION DEPLOYMENT NOTES

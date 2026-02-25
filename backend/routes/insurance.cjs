@@ -101,47 +101,28 @@ router.get('/plans', (req, res) => {
   res.json({ success: true, data: plans });
 });
 
-
-
 // Get single plan by ID
 router.get('/plans/:planId', (req, res) => {
   const { planId } = req.params;
   const plan = plans.find(p => p.id === planId);
-  
   if (!plan) {
-    return res.status(404).json({
-      success: false,
-      message: 'Plan not found'
-    });
+    return res.status(404).json({ success: false, message: 'Plan not found' });
   }
-  
-  res.json({
-    success: true,
-    data: plan
-  });
+  res.json({ success: true, data: plan });
 });
 
 // Create new subscription
 router.post('/subscriptions', (req, res) => {
   const subscriptionData = req.body;
-  
-  // Validate required fields
   if (!subscriptionData.planId || !subscriptionData.personalDetails) {
-    return res.status(400).json({
-      success: false,
-      message: 'Missing required fields'
-    });
+    return res.status(400).json({ success: false, message: 'Missing required fields' });
   }
-  
-  // Find the plan (if available). Accept unknown plan IDs for Zororo custom plans.
+
   const plan = plans.find(p => p.id === subscriptionData.planId);
   const planName = plan ? plan.name : (subscriptionData.planName || subscriptionData.planId);
   const monthlyPremium = plan ? plan.monthlyPremium : (subscriptionData.monthlyPremium || 0);
-  
-  // Generate policy reference
+
   const policyReference = `ZP-${Date.now().toString().slice(-8)}`;
-  
-  // Create subscription
   const subscription = {
     id: uuidv4(),
     policyReference,
@@ -154,60 +135,34 @@ router.post('/subscriptions', (req, res) => {
     createdAt: new Date().toISOString(),
     startDate: null
   };
-  
+
   subscriptions.push(subscription);
-  
-  res.status(201).json({
-    success: true,
-    data: subscription
-  });
+  res.status(201).json({ success: true, data: subscription });
 });
 
 // Upload ID / Passport image for a subscription (public during onboarding)
 router.post('/subscriptions/:subscriptionId/upload-id', idUpload.single('idDocument'), (req, res) => {
   const { subscriptionId } = req.params;
   const subscription = subscriptions.find(s => s.id === subscriptionId);
-  if (!subscription) {
-    return res.status(404).json({ success: false, message: 'Subscription not found' });
-  }
-
-  if (!req.file) {
-    return res.status(400).json({ success: false, message: 'No file uploaded' });
-  }
-
+  if (!subscription) return res.status(404).json({ success: false, message: 'Subscription not found' });
+  if (!req.file) return res.status(400).json({ success: false, message: 'No file uploaded' });
   subscription.personalDetails = subscription.personalDetails || {};
   subscription.personalDetails.idDocumentPath = `/uploads/kyc/${req.file.filename}`;
   subscription.updatedAt = new Date().toISOString();
-
   res.json({ success: true, message: 'ID uploaded', path: subscription.personalDetails.idDocumentPath });
 });
 
-// Process payment
+// Process payment (mock)
 router.post('/payments', (req, res) => {
   const paymentData = req.body;
-  
-  // Validate required fields
   if (!paymentData.subscriptionId || !paymentData.paymentMethod || !paymentData.amount) {
-    return res.status(400).json({
-      success: false,
-      message: 'Missing required payment fields'
-    });
+    return res.status(400).json({ success: false, message: 'Missing required payment fields' });
   }
-  
-  // Find subscription
   const subscription = subscriptions.find(s => s.id === paymentData.subscriptionId);
-  if (!subscription) {
-    return res.status(404).json({
-      success: false,
-      message: 'Subscription not found'
-    });
-  }
-  
-  // Simulate payment processing delay
+  if (!subscription) return res.status(404).json({ success: false, message: 'Subscription not found' });
+
   setTimeout(() => {
-    // Mock payment success (90% success rate for demo)
     const isSuccess = Math.random() > 0.1;
-    
     const payment = {
       id: uuidv4(),
       subscriptionId: paymentData.subscriptionId,
@@ -218,120 +173,28 @@ router.post('/payments', (req, res) => {
       transactionId: `TXN-${Date.now()}`,
       processedAt: new Date().toISOString()
     };
-    
     payments.push(payment);
-    
-    // Update subscription status
     if (isSuccess) {
       subscription.status = 'ACTIVE';
       subscription.startDate = new Date().toISOString();
       subscription.nextBillingDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
     }
-    
-    res.json({
-      success: true,
-      data: payment
-    });
-  }, 1500); // Simulate 1.5 second processing time
+    res.json({ success: true, data: payment });
+  }, 1200);
 });
 
-// Get subscription by policy reference
+// Basic retrieve endpoints
 router.get('/subscriptions/:policyReference', (req, res) => {
   const { policyReference } = req.params;
   const subscription = subscriptions.find(s => s.policyReference === policyReference);
-  
-  if (!subscription) {
-    return res.status(404).json({
-      success: false,
-      message: 'Subscription not found'
-    });
-  }
-  
-  res.json({
-    success: true,
-    data: subscription
-  });
+  if (!subscription) return res.status(404).json({ success: false, message: 'Subscription not found' });
+  res.json({ success: true, data: subscription });
 });
 
-// Get payment history for a subscription
 router.get('/payments/:subscriptionId', (req, res) => {
   const { subscriptionId } = req.params;
   const subscriptionPayments = payments.filter(p => p.subscriptionId === subscriptionId);
-  
-  res.json({
-    success: true,
-    data: subscriptionPayments
-  });
-});
-
-// Update subscription (for beneficiary updates, etc.)
-router.put('/subscriptions/:subscriptionId', (req, res) => {
-  const { subscriptionId } = req.params;
-  const updates = req.body;
-  
-  const subscriptionIndex = subscriptions.findIndex(s => s.id === subscriptionId);
-  
-  if (subscriptionIndex === -1) {
-    return res.status(404).json({
-      success: false,
-      message: 'Subscription not found'
-    });
-  }
-  
-  // Update subscription
-  subscriptions[subscriptionIndex] = {
-    ...subscriptions[subscriptionIndex],
-    ...updates,
-    updatedAt: new Date().toISOString()
-  };
-  
-  res.json({
-    success: true,
-    data: subscriptions[subscriptionIndex]
-  });
-});
-
-// Cancel subscription
-router.delete('/subscriptions/:subscriptionId', (req, res) => {
-  const { subscriptionId } = req.params;
-  
-  const subscriptionIndex = subscriptions.findIndex(s => s.id === subscriptionId);
-  
-  if (subscriptionIndex === -1) {
-    return res.status(404).json({
-      success: false,
-      message: 'Subscription not found'
-    });
-  }
-  
-  // Mark as cancelled
-  subscriptions[subscriptionIndex].status = 'CANCELLED';
-  subscriptions[subscriptionIndex].cancelledAt = new Date().toISOString();
-  
-  res.json({
-    success: true,
-    message: 'Subscription cancelled successfully',
-    data: subscriptions[subscriptionIndex]
-  });
-});
-
-// Get statistics (for admin dashboard)
-router.get('/stats', (req, res) => {
-  const stats = {
-    totalSubscriptions: subscriptions.length,
-    activeSubscriptions: subscriptions.filter(s => s.status === 'ACTIVE').length,
-    pendingSubscriptions: subscriptions.filter(s => s.status === 'PENDING_PAYMENT').length,
-    cancelledSubscriptions: subscriptions.filter(s => s.status === 'CANCELLED').length,
-    totalRevenue: payments
-      .filter(p => p.status === 'SUCCESS')
-      .reduce((sum, p) => sum + p.amount, 0),
-    recentSubscriptions: subscriptions.slice(-10).reverse()
-  };
-  
-  res.json({
-    success: true,
-    data: stats
-  });
+  res.json({ success: true, data: subscriptionPayments });
 });
 
 module.exports = router;

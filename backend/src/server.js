@@ -8,7 +8,10 @@ import contractRoutes from './routes/contracts.js';
 import userRoutes from './routes/users.js';
 import milestoneRoutes from './routes/milestones.js';
 import paymentRoutes from './routes/payments.js';
-import insuranceRoutes from '../routes/insurance.js';
+// insuranceRoutes (legacy CommonJS in ../routes) — load with createRequire for compatibility
+import { createRequire } from 'module';
+const requireRoutes = createRequire(import.meta.url);
+const insuranceRoutes = requireRoutes('../routes/insurance.cjs');
 import kycRoutes from './routes/kyc.js';
 import adminRoutes from './routes/admin.js';
 import constructionRoutes from './routes/construction.js';

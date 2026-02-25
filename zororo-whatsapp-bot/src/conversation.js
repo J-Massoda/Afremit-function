@@ -40,73 +40,30 @@ const userSessions = {};
  * INSURANCE PLAN DETAILS
  * ==============================================================================
  */
+// Load canonical plan data for bot menus and details
+const plansData = require('./data/zororo-plans.json');
+
+// Convert array to lookup map for quick access
+const ZORORO_PLANS = (plansData.plans || []).reduce((acc, p) => {
+  acc[p.id.toLowerCase()] = p;
+  return acc;
+}, {});
+
+// Add-ons (Accidental is an add-on, not a standalone plan)
+const ADD_ONS = plansData.addOns || {};
+
 const PLANS = {
   funeral: {
-    name: 'Funeral & Repatriation Cover',
-    description: `
-🏛️ *Funeral & Repatriation Cover*
-
-Comprehensive funeral insurance covering:
-✅ Funeral expenses (coffin, venue, catering)
-✅ Repatriation (bring loved ones home from anywhere)
-✅ Death certificate & legal documentation
-✅ Family support services
-
-💰 *Pricing:*
-• Individual: $10/month
-• Family (5 members): $30/month
-
-🌍 *Coverage:* Zimbabwe + Southern Africa
-
-Type *SUBSCRIBE* to begin enrollment.
-    `.trim(),
-    price: { individual: 10, family: 30 }
+    name: 'Funeral & Repatriation (Local)',
+    description: `🏛️ *Funeral & Repatriation*\n\nChoose from affordable local plans covering Zimbabwe and South Africa. Reply with the plan code to view or APPLY <code>.`,
+    price: {}
   },
-  
   worldwide: {
     name: 'Worldwide Funeral Cover',
-    description: `
-🌍 *Worldwide Funeral Cover*
-
-Premium global coverage including:
-✅ International repatriation from ANY country
-✅ 24/7 emergency assistance
-✅ Full funeral arrangements
-✅ Legal & documentation support worldwide
-✅ Family counseling services
-
-💰 *Pricing:*
-• Individual: $25/month
-• Family (5 members): $75/month
-
-🌎 *Coverage:* Global (all countries)
-
-Type *SUBSCRIBE* to begin enrollment.
-    `.trim(),
-    price: { individual: 25, family: 75 }
+    description: `🌍 *Worldwide Funeral Cover*\n\nGlobal repatriation and international funeral coordination. Reply *SUBSCRIBE* to enroll or *VIEW worldwide-r30000* for details.`,
+    price: {}
   },
-  
-  accidental: {
-    name: 'Accidental Death Cover',
-    description: `
-⚡ *Accidental Death Cover*
-
-Financial protection for unexpected accidents:
-✅ Lump sum payout on accidental death
-✅ Covers: traffic, workplace, home accidents
-✅ Medical expenses from accidents
-✅ Permanent disability cover
-✅ 24/7 claim processing
-
-💰 *Pricing:*
-• $100,000 coverage: $15/month
-• $250,000 coverage: $35/month
-• $500,000 coverage: $65/month
-
-Type *SUBSCRIBE* to begin enrollment.
-    `.trim(),
-    price: { basic: 15, standard: 35, premium: 65 }
-  }
+  addOns: ADD_ONS
 };
 
 /**
@@ -137,6 +94,21 @@ async function handleIncomingMessage(from, message) {
   // ONBOARDING FLOW (multi-step data collection)
   // ==============================================================================
   
+  // Step 1a: Accidental add‑on decision (if user was asked)
+  if (session.step === 'awaiting_addon') {
+    if (userMessage === 'yes' || userMessage === 'y') {
+      session.addOns = session.addOns || [];
+      session.addOns.push('accidental');
+      session.step = 'awaiting_name';
+      return `Great — Accidental Death Cover will be added.\n\nPlease provide your *full name* as it appears on your ID to continue.`;
+    }
+
+    // treat any other reply as NO
+    session.addOns = session.addOns || [];
+    session.step = 'awaiting_name';
+    return `No problem — Accidental Cover will be skipped.\n\nPlease provide your *full name* as it appears on your ID to continue.`;
+  }
+
   // Step 1: Collecting full name
   if (session.step === 'awaiting_name') {
     session.name = message.trim();
@@ -152,45 +124,19 @@ Example:
 • Passport: AB123456`;
   }
   
-  // Step 2: Collecting ID/Passport number
+  // Step 2: Collecting ID/Passport number (text or upload)
   if (session.step === 'awaiting_id') {
-    session.idNumber = message.trim();
-    session.step = 'payment_pending';
-    console.log(`✅ ID collected: ${session.idNumber}`);
-    
-    // TODO: Validate ID format (Zimbabwe ID: XX-XXXXXXX-X-XX)
-    // TODO: Store data in database
-    
-    return `Perfect! Your details are confirmed. ✅
+    // If user provided a textual ID number
+    if (message && message.trim().length > 3) {
+      session.idNumber = message.trim();
+      session.step = 'payment_pending';
+      console.log(`✅ ID collected: ${session.idNumber}`);
 
-*Enrollment Summary:*
-👤 Name: ${session.name}
-🆔 ID: ${session.idNumber}
-📋 Plan: ${session.selectedPlan || 'Funeral & Repatriation'}
+      return `Perfect! Your details are confirmed. ✅\n\n*Enrollment Summary:*\n👤 Name: ${session.name}\n🆔 ID: ${session.idNumber}\n📋 Plan: ${session.selectedPlan || 'Funeral & Repatriation'}\n\n*Next Step: Payment*\n\n💳 *Payment Options:*\n\n1️⃣ *EcoCash:*\n   • Send to: 0771234567\n   • Reference: ${session.idNumber}\n\n2️⃣ *Bank Transfer:*\n   • Bank: CBZ\n   • Account: 12345678\n   • Reference: ${session.idNumber}\n\n3️⃣ *Online Payment:*\n   🔗 https://zororo-phumulani.com/pay/${session.idNumber}\n\nYou may also upload a photo of your ID/passport in this chat for verification.\nAfter payment, reply with: *PAID [transaction reference]*`;
+    }
 
-*Next Step: Payment*
-
-💳 *Payment Options:*
-
-1️⃣ *EcoCash:*
-   • Send to: 0771234567
-   • Amount: $10
-   • Reference: ${session.idNumber}
-
-2️⃣ *Bank Transfer:*
-   • Bank: CBZ
-   • Account: 12345678
-   • Reference: ${session.idNumber}
-
-3️⃣ *Online Payment:*
-   🔗 https://zororo-phumulani.com/pay/${session.idNumber}
-
-After payment, reply with:
-*PAID [transaction reference]*
-
-Example: PAID ECO123456789
-
-Need help? Type *AGENT* to speak with a representative.`;
+    // If empty text, prompt for ID or upload
+    return `Please provide your ID or Passport number, or upload a photo of the document here.`;
   }
   
   // Payment confirmation
@@ -234,39 +180,35 @@ Thank you for trusting Zororo Phumulani! 🛡️`;
   
   // Greeting / Show main menu
   if (userMessage.match(/^(hi|hello|hey|start|menu)$/)) {
-    return `Welcome to *Zororo Phumulani Insurance*! 🛡️
-
-Your trusted partner for peace of mind.
-
-*Choose a plan to learn more:*
-
-1️⃣ Funeral & Repatriation Cover
-   💰 From $10/month
-   
-2️⃣ Worldwide Funeral Cover
-   💰 From $25/month
-   
-3️⃣ Accidental Death Cover
-   💰 From $15/month
-
-4️⃣ Speak with Agent 👨‍💼
-
-*Reply with a number* (1, 2, 3, or 4)
-
-Or type *INFO* for company details.`;
+    return `Welcome to *Zororo Phumulani Insurance*! 🛡️\n\nChoose an option:\n\n1️⃣ Local Plans (Basic / Mid / Premium)\n2️⃣ Worldwide Funeral Plan\n3️⃣ Speak with Agent\n\nReply with the number (1, 2 or 3) or type *MENU* at any time.`;
   }
   
-  // Plan selection: 1, 2, 3
+  // User selects top-level menu options
   if (userMessage === '1') {
-    return PLANS.funeral.description;
+    // Show local plans grouped by tier
+    const categories = ['Basic','Mid','Premium'];
+    let msg = `*Local Plans — Reply VIEW <code> or APPLY <code>*:\n\n`;
+    categories.forEach(cat => {
+      msg += `*${cat}*:\n`;
+      const list = Object.values(ZORORO_PLANS).filter(p => p.category === cat);
+      list.forEach(p => {
+        msg += `• ${p.displayName} — Family R${p.premiumFamily} / Single R${p.premiumSingle} (code: ${p.id})\n`;
+      });
+      msg += `\n`;
+    });
+    msg += `Example: VIEW r2000 or APPLY r2000`;
+    return msg;
   }
-  
+
   if (userMessage === '2') {
-    return PLANS.worldwide.description;
+    const wp = ZORORO_PLANS['worldwide-r30000'];
+    if (!wp) return PLANS.worldwide.description;
+    return `*${wp.displayName}*\n\nCover: R${wp.coverAmount}\nFamily: R${wp.premiumFamily} / Single: R${wp.premiumSingle}\n\nKey benefits:\n- ${wp.keyBenefits.join('\n- ')}\n\nReply *APPLY ${wp.id}* to start the onboarding.`;
   }
-  
+
+  // '3' reserved for Agent (handled below)
   if (userMessage === '3') {
-    return PLANS.accidental.description;
+    return `📞 *Connecting you with an agent...*\n\nOur team will respond shortly. You can also email support@zororo-phumulani.com or call +263 771 234 567.`;
   }
   
   // Agent request
@@ -285,17 +227,48 @@ You can also:
 An agent will respond shortly. Thank you for your patience! 🙏`;
   }
   
+  // VIEW <planCode> or APPLY <planCode> (e.g. VIEW r2000, APPLY r2000)
+  const viewMatch = message.match(/^view\s+([a-z0-9\-]+)/i);
+  const applyMatch = message.match(/^apply\s+([a-z0-9\-]+)/i);
+  const codeOnlyMatch = message.match(/^([a-z]\d{3,5}|worldwide\-r\d{4,5})$/i);
+
+  if (viewMatch) {
+    const code = viewMatch[1].toLowerCase();
+    const plan = ZORORO_PLANS[code];
+    if (!plan) return `Plan code *${code}* not found. Reply *MENU* to see available plans.`;
+    return `*${plan.displayName}*\n\nCover: R${plan.coverAmount}\nFamily: R${plan.premiumFamily} / Single: R${plan.premiumSingle}\nCasket: ${plan.casketType}\n\nKey benefits:\n- ${plan.keyBenefits.join('\n- ')}\n\nReply *APPLY ${plan.id}* to enroll.`;
+  }
+
+  if (applyMatch) {
+    const code = applyMatch[1].toLowerCase();
+    const plan = ZORORO_PLANS[code];
+    if (!plan) return `Plan code *${code}* not found. Reply *MENU* to see available plans.`;
+    session.selectedPlan = code;
+
+    // Prompt for accidental add-on if available
+    const accidentalAddOn = ADD_ONS?.accidental;
+    if (accidentalAddOn) {
+      session.step = 'awaiting_addon';
+      return `You chose *${plan.displayName}* (Family R${plan.premiumFamily}).\nWould you like to add *Accidental Death Cover* for +R${accidentalAddOn.price}/month? Reply *YES* to add or *NO* to skip.`;
+    }
+
+    session.step = 'awaiting_name';
+    return `🎉 You chose *${plan.displayName}* (R${plan.premiumFamily}/family · R${plan.premiumSingle}/single).\n\nFirst, please provide your *full name* as it appears on your ID.`;
+  }
+
+  if (codeOnlyMatch) {
+    const code = codeOnlyMatch[1].toLowerCase();
+    const plan = ZORORO_PLANS[code];
+    if (!plan) return `Plan code *${code}* not found.`;
+    return `*${plan.displayName}* — Family: R${plan.premiumFamily} / Single: R${plan.premiumSingle}\nReply *VIEW ${plan.id}* for full benefits or *APPLY ${plan.id}* to enroll.`;
+  }
+
   // Begin subscription/onboarding
   if (userMessage === 'subscribe' || userMessage === 'enroll' || userMessage === 'sign up') {
     session.step = 'awaiting_name';
     console.log(`🚀 Starting onboarding for ${from}`);
     
-    return `🎉 Great! Let's get you enrolled.
-
-This will only take 2 minutes.
-
-First, what is your *full name*?
-(as it appears on your ID)`;
+    return `🎉 Great! Let's get you enrolled.\n\nThis will only take 2 minutes.\n\nFirst, what is your *full name*?\n(as it appears on your ID)`;
   }
   
   // Company information
@@ -410,11 +383,27 @@ function resetUserSession(phoneNumber) {
   console.log(`🔄 Session reset for ${phoneNumber}`);
 }
 
-// ==============================================================================
+// Handle incoming media (images) — e.g. ID / passport photo sent via WhatsApp
+function handleIncomingMedia(from, mediaMessage) {
+  if (!userSessions[from]) userSessions[from] = { step: 'initial' };
+  const session = userSessions[from];
+
+  if (session.step === 'awaiting_id' && mediaMessage.type === 'image') {
+    session.idImage = mediaMessage; // store raw media payload (media id / caption)
+    session.step = 'payment_pending';
+    console.log(`✅ ID image received for ${from}`);
+    return `🆗 ID image received. Thank you — we've saved that for verification.\n\nNow proceed to payment and reply *PAID [reference]* when done.`;
+  }
+
+  return null;
+}
+
+// ======================================================================
 // EXPORTS
-// ==============================================================================
+// ======================================================================
 module.exports = {
   handleIncomingMessage,
+  handleIncomingMedia,
   resetUserSession
 };
 

@@ -10,10 +10,9 @@
 
 const axios = require('axios');
 
-// Your webhook URL (change if testing deployed version)
-const WEBHOOK_URL = 'http://localhost:3000/webhook';
-// For Render deployment, use:
-// const WEBHOOK_URL = 'https://your-app-name.onrender.com/webhook';
+// Your webhook URL (change if testing deployed version) - can be overridden with env WEBHOOK_URL
+const WEBHOOK_URL = process.env.WEBHOOK_URL || 'http://localhost:3000/webhook';
+// Example: WEBHOOK_URL=http://localhost:4000/webhook node test-webhook.js
 
 // Sample WhatsApp webhook payload (matches Meta's structure exactly)
 const samplePayload = {

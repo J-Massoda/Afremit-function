@@ -16,7 +16,7 @@
 require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
-const { handleIncomingMessage } = require('./conversation');
+const { handleIncomingMessage, handleIncomingMedia } = require('./conversation');
 const { sendMessage } = require('./whatsapp');
 
 const app = express();
@@ -162,11 +162,31 @@ app.post('/webhook', async (req, res) => {
     console.log(`ID: ${messageId}`);
     console.log(`========================\n`);
 
-    // Check message type
+    // Handle non-text message types (allow image uploads during onboarding)
     if (messageType !== 'text') {
-      console.log(`⚠️  Message type "${messageType}" not supported yet`);
-      console.log('   Only text messages are handled currently');
-      await sendMessage(from, 'Sorry, I can only process text messages at the moment. Please send a text message.');
+      console.log(`ℹ️  Non-text message type received: "${messageType}"`);
+
+      // If user is uploading ID/passport image during onboarding, let the conversation handler process it
+      if (messageType === 'image') {
+        try {
+          const mediaReply = await handleIncomingMedia(from, message);
+          if (mediaReply) {
+            await sendMessage(from, mediaReply);
+            continue;
+          } else {
+            await sendMessage(from, '✅ Image received. If this is your ID, we will verify it and get back to you.');
+            continue;
+          }
+        } catch (err) {
+          console.error('Error handling incoming media:', err.message);
+          await sendMessage(from, 'Sorry, I couldn\'t process the image. Please try again.');
+          continue;
+        }
+      }
+
+      // Fallback for other types
+      console.log('⚠️  Message type not supported in this MVP');
+      await sendMessage(from, 'Sorry, I can only process text messages (and ID images during onboarding) at the moment.');
       return;
     }
 

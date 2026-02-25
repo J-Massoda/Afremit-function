@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import Button from '../../components/shared/Button';
 import Card from '../../components/shared/Card';
 import Icon from '../../components/shared/Icon';
+import plansData from '../../data/zororo-plans.json';
 
 const ConfirmationPage = () => {
   const location = useLocation();
@@ -86,9 +87,17 @@ const ConfirmationPage = () => {
                     <p className="text-sm text-neutral-600">{planDetails.coverageSummary}</p>
                   </div>
                 </div>
-                <div className="flex justify-between items-center border-t border-primary-200 pt-4">
-                  <span className="text-neutral-600">Monthly Premium</span>
-                  <span className="text-2xl font-bold text-secondary">{planDetails.monthlyPremium}</span>
+                <div className="flex flex-col gap-2 border-t border-primary-200 pt-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-neutral-600">Monthly Premium</span>
+                    <span className="text-2xl font-bold text-secondary">{planDetails.monthlyPremium}</span>
+                  </div>
+                  {formData?.addAccidental && (
+                    <div className="flex justify-between items-center text-sm text-neutral-600">
+                      <span>Accidental Add‑on</span>
+                      <span className="font-semibold">R{plansData.addOns.accidental.price}</span>
+                    </div>
+                  )}
                 </div>
               </div>
 

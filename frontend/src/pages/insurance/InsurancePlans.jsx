@@ -4,120 +4,36 @@ import { motion } from 'framer-motion';
 import Button from '../../components/shared/Button';
 import Card from '../../components/shared/Card';
 import Icon from '../../components/shared/Icon';
+import plansData from '../../data/zororo-plans.json';
 
 const InsurancePlans = () => {
   const navigate = useNavigate();
+  const [selectedCategory, setSelectedCategory] = React.useState('Basic');
 
-  const plans = [
-    {
-      id: 'funeral-repatriation',
-      name: 'Funeral & Repatriation Plan',
-      tagline: 'Complete funeral cover with repatriation',
-      startingPrice: 'Starting from $25',
-      popular: true,
-      icon: 'shield',
-      color: 'primary',
-      keyBenefits: [
-        'Funeral arrangements and costs covered',
-        'Repatriation from South Africa',
-        'Spouse + up to 6 children covered',
-        'Chema & Nhaka allowance',
-        'Hearse and casket provided',
-        'Documentation support'
-      ],
-      fullBenefits: [
-        'Complete funeral arrangements',
-        'Repatriation from South Africa to home country',
-        'Coverage for policyholder, spouse, and up to 6 children',
-        'Hearse and transportation',
-        'Casket or cremation costs',
-        'Chema (wake) allowance',
-        'Nhaka (inheritance ceremony) support',
-        'Death certificate and documentation assistance',
-        'Grief counseling services',
-        'Memorial service coordination'
-      ],
-      coverageLimits: {
-        mainMember: 'Up to $10,000',
-        spouse: 'Up to $8,000',
-        children: 'Up to $5,000 each'
-      },
-      waitingPeriod: '6 months for natural death, immediate for accidental death',
-      whoCovered: 'Policyholder (18-65), Spouse, Children (0-21 or up to 25 if in school)'
+  // load plans from canonical JSON data (zororo-plans.json)
+
+  // Transform and normalize for UI
+  const rawPlans = plansData.plans || [];
+  const plans = rawPlans.map(p => ({
+    id: p.id,
+    name: p.displayName,
+    tagline: `${p.coverAmount ? 'Cover: R' + p.coverAmount : ''}`,
+    startingPrice: `Family: R${p.premiumFamily} · Single: R${p.premiumSingle}`,
+    popular: p.tierOrder <= 2,
+    icon: p.category === 'Worldwide' ? 'airplane' : 'shield',
+    color: p.category === 'Premium' ? 'secondary' : 'primary',
+    keyBenefits: p.keyBenefits || [],
+    fullBenefits: p.fullBenefits || [],
+    coverageLimits: {
+      mainMember: `R${p.coverAmount}`,
+      spouse: p.extras?.spouse || 'See plan',
+      children: p.extras?.children || 'See plan'
     },
-    {
-      id: 'worldwide-funeral',
-      name: 'Worldwide Funeral Plan',
-      tagline: 'Global coverage with international repatriation',
-      startingPrice: 'Starting from $45',
-      popular: false,
-      icon: 'airplane',
-      color: 'secondary',
-      keyBenefits: [
-        'Worldwide repatriation included',
-        'International funeral coverage',
-        'Family coverage included',
-        'Emergency assistance 24/7',
-        'Multiple country support',
-        'Premium funeral services'
-      ],
-      fullBenefits: [
-        'Worldwide repatriation to any country',
-        'International funeral service coordination',
-        'Coverage for policyholder, spouse, and dependants',
-        '24/7 emergency assistance hotline',
-        'Premium hearse and transportation',
-        'High-quality casket or cremation',
-        'International documentation support',
-        'Multi-country legal assistance',
-        'Cultural ceremony accommodations',
-        'Translation services if needed',
-        'Embassy coordination support'
-      ],
-      coverageLimits: {
-        mainMember: 'Up to $15,000',
-        spouse: 'Up to $12,000',
-        children: 'Up to $8,000 each'
-      },
-      waitingPeriod: '3 months for natural death, immediate for accidental death',
-      whoCovered: 'Policyholder (18-70), Spouse, Children (0-21 or up to 25 if in school), Parents (optional add-on)'
-    },
-    {
-      id: 'accidental-death',
-      name: 'Accidental Death Cover',
-      tagline: 'Immediate protection for accidents',
-      startingPrice: 'From $15',
-      popular: false,
-      icon: 'medical',
-      color: 'accent',
-      keyBenefits: [
-        'Accidental death coverage only',
-        'Immediate cover - no waiting period',
-        'Low monthly premium',
-        'Lump sum payout',
-        'Simple benefits',
-        'Fast claim processing'
-      ],
-      fullBenefits: [
-        'Lump sum payment for accidental death',
-        'No waiting period - immediate coverage',
-        'Coverage for fatal accidents only',
-        'Simple claim process',
-        'Fast payout within 48 hours of claim approval',
-        'Covers policyholder only',
-        'Death certificate assistance',
-        'Basic funeral cost contribution',
-        'Family notification support'
-      ],
-      coverageLimits: {
-        mainMember: 'Up to $20,000 lump sum',
-        spouse: 'Not covered (can purchase separate policy)',
-        children: 'Not covered (can purchase separate policy)'
-      },
-      waitingPeriod: 'No waiting period - immediate coverage',
-      whoCovered: 'Policyholder only (18-65 years old)'
-    }
-  ];
+    waitingPeriod: p.waitingPeriod || 'See terms',
+    whoCovered: p.whoCovered || 'See terms',
+    category: p.category
+  }));
+
 
   const handleSubscribe = (planId) => {
     navigate(`/insurance/subscribe/${planId}`);
@@ -186,36 +102,45 @@ const InsurancePlans = () => {
             </p>
           </motion.div>
 
+          {/* Category Tabs */}
+          <div className="flex justify-center gap-4 mb-6">
+            {['Basic','Mid','Premium','Worldwide'].map(cat => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-4 py-2 rounded-full font-semibold ${selectedCategory === cat ? 'bg-secondary text-white' : 'bg-neutral-100 text-neutral-700'}`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
           <div className="grid md:grid-cols-3 gap-8">
-            {plans.map((plan, index) => (
+            {plans.filter(p => p.category === selectedCategory).map((plan, index) => (
               <motion.div
                 key={plan.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 + index * 0.1 }}
+                transition={{ delay: 0.2 + index * 0.05 }}
                 className="relative"
               >
                 {plan.popular && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
-                    <span className="bg-secondary text-white px-4 py-1 rounded-full text-sm font-bold shadow-lg">
-                      Most Popular
-                    </span>
+                    <span className="bg-secondary text-white px-4 py-1 rounded-full text-sm font-bold shadow-lg">Most Popular</span>
                   </div>
                 )}
-                
+
                 <Card className={`h-full ${plan.popular ? 'ring-2 ring-secondary shadow-2xl' : ''}`}>
-                  {/* Plan Header */}
                   <div className="text-center mb-6">
                     <div className="mb-4 flex justify-center">
                       <Icon name={plan.icon} className="w-16 h-16 text-primary" />
                     </div>
                     <h3 className="text-2xl font-bold text-primary mb-2">{plan.name}</h3>
-                    <p className="text-neutral-600 mb-4">{plan.tagline}</p>
-                    <div className="text-3xl font-bold text-secondary mb-2">{plan.startingPrice}</div>
-                    <p className="text-sm text-neutral-500">per month</p>
+                    <p className="text-neutral-600 mb-2">{plan.tagline}</p>
+                    <div className="text-2xl font-bold text-secondary mb-1">Family: R{plan.startingPrice.split('·')[0].replace('Family: R','').trim()}</div>
+                    <div className="text-sm text-neutral-500">Single: R{plan.startingPrice.split('·')[1].replace('Single: R','').trim()}</div>
                   </div>
 
-                  {/* Key Benefits */}
                   <ul className="space-y-3 mb-8">
                     {plan.keyBenefits.map((benefit, idx) => (
                       <li key={idx} className="flex items-start text-sm">
@@ -227,20 +152,10 @@ const InsurancePlans = () => {
                     ))}
                   </ul>
 
-                  {/* CTA Button */}
-                  <Button 
-                    onClick={() => handleSubscribe(plan.id)}
-                    variant={plan.popular ? 'primary' : 'outline'}
-                    className="w-full"
-                  >
-                    Subscribe Now
-                  </Button>
+                  <Button onClick={() => handleSubscribe(plan.id)} variant={plan.popular ? 'primary' : 'outline'} className="w-full">Subscribe Now</Button>
 
-                  {/* View Details Link */}
                   <button
-                    onClick={() => {
-                      document.getElementById(`plan-details-${plan.id}`).scrollIntoView({ behavior: 'smooth' });
-                    }}
+                    onClick={() => document.getElementById(`plan-details-${plan.id}`).scrollIntoView({ behavior: 'smooth' })}
                     className="w-full mt-3 text-sm text-secondary hover:text-secondary-700 font-semibold"
                   >
                     View Full Details →

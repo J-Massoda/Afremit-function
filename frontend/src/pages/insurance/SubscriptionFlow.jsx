@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Button from '../../components/shared/Button';
 import Card from '../../components/shared/Card';
 import Icon from '../../components/shared/Icon';
+import plansData from '../../data/zororo-plans.json';
 
 const SubscriptionFlow = () => {
   const { planId } = useParams();
@@ -19,6 +20,7 @@ const SubscriptionFlow = () => {
     
     // Step 2: Beneficiary Details
     policyholderIdPassport: '',
+    policyholderIdUpload: null, // file object for ID / Passport photo
     spouseFullName: '',
     spouseIdPassport: '',
     spouseDateOfBirth: '',
@@ -26,6 +28,9 @@ const SubscriptionFlow = () => {
     beneficiaryName: '',
     beneficiaryRelationship: '',
     beneficiaryPhone: '',
+
+    // Optional add-ons
+    addAccidental: false,
     
     // Step 3: Terms acceptance
     acceptTerms: false,
@@ -35,35 +40,23 @@ const SubscriptionFlow = () => {
   const [planDetails, setPlanDetails] = useState(null);
 
   useEffect(() => {
-    // Fetch plan details (mock data for now)
-    const plans = {
-      'funeral-repatriation': {
-        id: 'funeral-repatriation',
-        name: 'Funeral & Repatriation Plan',
-        monthlyPremium: '$25',
-        icon: 'shield',
-        coverageSummary: 'Complete funeral cover with repatriation from South Africa',
-        waitingPeriod: '6 months for natural death'
-      },
-      'worldwide-funeral': {
-        id: 'worldwide-funeral',
-        name: 'Worldwide Funeral Plan',
-        monthlyPremium: '$45',
-        icon: 'airplane',
-        coverageSummary: 'Worldwide repatriation and international funeral coverage',
-        waitingPeriod: '3 months for natural death'
-      },
-      'accidental-death': {
-        id: 'accidental-death',
-        name: 'Accidental Death Cover',
-        monthlyPremium: '$15',
-        icon: 'medical',
-        coverageSummary: 'Immediate accidental death coverage with no waiting period',
-        waitingPeriod: 'No waiting period'
+    // Load plan details from canonical data file
+    try {
+      const raw = plansData;
+      const found = raw.plans.find(p => p.id === planId) || raw.plans.find(p => p.id === 'r2000');
+      if (found) {
+        setPlanDetails({
+          id: found.id,
+          name: found.displayName,
+          monthlyPremium: `Family: R${found.premiumFamily} · Single: R${found.premiumSingle}`,
+          icon: found.category === 'Worldwide' ? 'airplane' : 'shield',
+          coverageSummary: found.fullBenefits && found.fullBenefits[0] ? found.fullBenefits[0] : found.keyBenefits.join(', '),
+          waitingPeriod: found.waitingPeriods || 'See terms'
+        });
       }
-    };
-    
-    setPlanDetails(plans[planId] || plans['funeral-repatriation']);
+    } catch (err) {
+      console.error('Failed to load plan data', err);
+    }
   }, [planId]);
 
   const steps = [
@@ -74,10 +67,11 @@ const SubscriptionFlow = () => {
   ];
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type, checked, files } = e.target;
+    const fieldValue = type === 'checkbox' ? checked : (type === 'file' ? files[0] : value);
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: fieldValue
     }));
   };
 
@@ -109,7 +103,8 @@ const SubscriptionFlow = () => {
       case 1:
         return formData.fullName && formData.phone && formData.email && formData.countryOfResidence;
       case 2:
-        return formData.policyholderIdPassport && formData.beneficiaryName && formData.beneficiaryRelationship;
+        // allow either typed ID/passport OR uploaded ID file
+        return (formData.policyholderIdPassport || formData.policyholderIdUpload) && formData.beneficiaryName && formData.beneficiaryRelationship;
       case 3:
         return formData.acceptTerms && formData.acceptWaitingPeriod;
       default:
@@ -160,7 +155,7 @@ const SubscriptionFlow = () => {
                         : 'bg-neutral-200 text-neutral-500'
                     }`}
                   >
-                    <span className="text-2xl">{step.icon}</span>
+                    <Icon name={step.icon} className="w-6 h-6" />
                   </div>
                   <div className={`mt-2 text-sm font-semibold text-center ${
                     currentStep >= step.number ? 'text-secondary' : 'text-neutral-500'
@@ -281,6 +276,18 @@ const SubscriptionFlow = () => {
                       className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent"
                       placeholder="ID or Passport Number"
                     />
+
+                    <p className="text-xs text-neutral-500 mt-2">Or upload a photo of your ID / Passport for verification</p>
+                    <input
+                      type="file"
+                      name="policyholderIdUpload"
+                      accept="image/*,application/pdf"
+                      onChange={handleChange}
+                      className="mt-2"
+                    />
+                    {formData.policyholderIdUpload && (
+                      <div className="mt-2 text-sm text-neutral-600">Selected file: {formData.policyholderIdUpload.name}</div>
+                    )}
                   </div>
 
                   {/* Spouse Details */}
@@ -448,9 +455,17 @@ const SubscriptionFlow = () => {
                       <p className="text-neutral-600">{planDetails.coverageSummary}</p>
                     </div>
                   </div>
-                  <div className="flex justify-between items-center border-t pt-4 mt-4">
-                    <span className="font-semibold text-primary">Monthly Premium:</span>
-                    <span className="text-3xl font-bold text-secondary">{planDetails.monthlyPremium}</span>
+                  <div className="flex flex-col gap-2 border-t pt-4 mt-4">
+                    <div className="flex justify-between items-center">
+                      <span className="font-semibold text-primary">Monthly Premium:</span>
+                      <span className="text-3xl font-bold text-secondary">{planDetails.monthlyPremium}</span>
+                    </div>
+                    {formData.addAccidental && (
+                      <div className="flex justify-between items-center text-sm text-neutral-600">
+                        <span>+ Accidental Add‑on</span>
+                        <span className="font-semibold">R{plansData.addOns.accidental.price}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -489,6 +504,28 @@ const SubscriptionFlow = () => {
                     </div>
                   </div>
                 </div>
+
+                {/* Add‑ons */}
+                <Card className="mb-6 bg-white">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="font-bold text-primary">Add Accidental Death Cover</h4>
+                      <p className="text-sm text-neutral-600">Optional accidental death protection as an add‑on (+R15/month).</p>
+                    </div>
+                    <div>
+                      <label className="flex items-center gap-3">
+                        <input
+                          type="checkbox"
+                          name="addAccidental"
+                          checked={formData.addAccidental}
+                          onChange={handleChange}
+                          className="w-5 h-5 text-secondary focus:ring-secondary rounded"
+                        />
+                        <span className="text-sm font-semibold">Add (+R15/month)</span>
+                      </label>
+                    </div>
+                  </div>
+                </Card>
 
                 {/* Terms & Conditions */}
                 <div className="space-y-4">

@@ -1,0 +1,162 @@
+{
+  "plans": [
+    {
+      "id": "r2000",
+      "displayName": "R2,000 Cover",
+      "coverAmount": 2000,
+      "cashOption": 2000,
+      "premiumFamily": 89,
+      "premiumSingle": 79,
+      "casketType": "1 Tier",
+      "category": "Basic",
+      "regionTags": ["ZA", "ZW"],
+      "keyBenefits": ["Hearse: Included", "Lowering Device: Included", "Documentation Assistance: Included"],
+      "fullBenefits": [
+        "Cash Option: R2,000",
+        "Chema/Inyembezi: R400",
+        "Nhaka/Ilifa: R1,000",
+        "Transportation Vehicle: 6 Seats",
+        "Lowering Device: Included",
+        "Documentation Assistance: Included"
+      ],
+      "extras": { "transportSeats": 6 },
+      "tierOrder": 1
+    },
+    {
+      "id": "r5000",
+      "displayName": "R5,000 Cover",
+      "coverAmount": 5000,
+      "cashOption": 5000,
+      "premiumFamily": 129,
+      "premiumSingle": 119,
+      "casketType": "1 Tier",
+      "category": "Basic",
+      "regionTags": ["ZA", "ZW"],
+      "keyBenefits": ["Cremation: Included", "Flight Option: Included", "Lowering Device: Included"],
+      "fullBenefits": [
+        "Cash Option: R5,000",
+        "Chema/Inyembezi: R1,000",
+        "Nhaka/Ilifa: R2,500",
+        "Cremation: Included",
+        "Graveside Equipment: Included",
+        "Lowering Device: Included",
+        "Flight Option: Included",
+        "Transportation Vehicle: 6 Seats",
+        "Documentation Assistance: Included"
+      ],
+      "extras": { "transportSeats": 6 },
+      "tierOrder": 2
+    },
+    {
+      "id": "r10000",
+      "displayName": "R10,000 Cover",
+      "coverAmount": 10000,
+      "cashOption": 10000,
+      "premiumFamily": 169,
+      "premiumSingle": 159,
+      "casketType": "2 Tier",
+      "category": "Mid",
+      "regionTags": ["ZA", "ZW"],
+      "keyBenefits": ["Bus Benefit: R3,000", "Tombstone Contribution: R1,000", "Transportation Vehicle: 13 Seats"],
+      "fullBenefits": [
+        "Cash Option: R10,000",
+        "Chema/Inyembezi: R2,000",
+        "Nhaka/Ilifa: R5,000",
+        "Bus Benefit: R3,000",
+        "Tombstone Contribution: R1,000",
+        "Cremation: Included",
+        "Graveside Equipment: Included",
+        "Lowering Device: Included",
+        "Flight Option: Included",
+        "Transportation Vehicle: 13 Seats",
+        "Documentation Assistance: Included"
+      ],
+      "extras": { "transportSeats": 13 },
+      "tierOrder": 3
+    },
+    {
+      "id": "r15000",
+      "displayName": "R15,000 Cover",
+      "coverAmount": 15000,
+      "premiumFamily": 209,
+      "premiumSingle": 199,
+      "casketType": "3 Tier",
+      "category": "Mid",
+      "regionTags": ["ZA", "ZW"],
+      "keyBenefits": ["Bus Benefit: R3,000", "Tombstone Contribution: R1,500", "Transportation Vehicle: 13 Seats"],
+      "fullBenefits": ["All other benefits included (see plan details)"],
+      "extras": { "transportSeats": 13 },
+      "tierOrder": 4
+    },
+    {
+      "id": "r18000",
+      "displayName": "R18,000 Cover",
+      "coverAmount": 18000,
+      "premiumFamily": 229,
+      "premiumSingle": 209,
+      "casketType": "M-Dome",
+      "category": "Mid",
+      "regionTags": ["ZA", "ZW"],
+      "keyBenefits": ["Bus Benefit: R3,000", "Tombstone Contribution: R1,800", "Transportation Vehicle: 13 Seats"],
+      "fullBenefits": ["All other benefits included (see plan details)"],
+      "extras": { "transportSeats": 13 },
+      "tierOrder": 5
+    },
+    {
+      "id": "r25000",
+      "displayName": "R25,000 Cover",
+      "coverAmount": 25000,
+      "premiumFamily": 279,
+      "premiumSingle": 259,
+      "casketType": "S-Dome",
+      "category": "Premium",
+      "regionTags": ["ZA", "ZW"],
+      "keyBenefits": ["Bus Benefit: R3,000", "Tombstone Contribution: R2,500", "Transportation Vehicle: 13 Seats"],
+      "fullBenefits": ["All other benefits included (see plan details)"],
+      "extras": { "transportSeats": 13 },
+      "tierOrder": 6
+    },
+    {
+      "id": "r30000",
+      "displayName": "R30,000 Cover",
+      "coverAmount": 30000,
+      "premiumFamily": 299,
+      "premiumSingle": 289,
+      "casketType": "S-Dome",
+      "category": "Premium",
+      "regionTags": ["ZA", "ZW", "GLOBAL"],
+      "keyBenefits": ["Bus Benefit: R3,000", "Tombstone Contribution: R3,000", "Transportation Vehicle: 13 Seats"],
+      "fullBenefits": ["All other benefits included (see plan details)"],
+      "extras": { "transportSeats": 13 },
+      "tierOrder": 7
+    },
+    {
+      "id": "worldwide-r30000",
+      "displayName": "Worldwide R30,000 Cover",
+      "coverAmount": 30000,
+      "premiumFamily": 319,
+      "premiumSingle": 299,
+      "casketType": "Dome",
+      "category": "Worldwide",
+      "regionTags": ["GLOBAL"],
+      "keyBenefits": ["Air Repatriation Included", "Air tickets for 2 family members", "Documentation & coordination"],
+      "fullBenefits": [
+        "Repatriation by Aeroplane (from anywhere in the world)",
+        "Air Tickets for 2 Family Members",
+        "Cross-border body transportation logistics",
+        "Coordination with international authorities",
+        "Service or cash option available"
+      ],
+      "extras": { "transportSeats": 0 },
+      "tierOrder": 8
+    }
+  ],
+  "addOns": {
+    "accidental": {
+      "id": "add-on-accidental",
+      "displayName": "Accidental Death Cover (Add-on)",
+      "description": "Accidental death protection available as an add-on to select funeral plans.",
+      "price": 15
+    }
+  }
+}

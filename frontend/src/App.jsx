@@ -37,6 +37,14 @@ import ProviderContracts from './pages/app/provider/Contracts';
 import AdminDashboard from './pages/app/admin/Dashboard';
 import AdminKYCReview from './pages/app/admin/AdminKYCReview';
 
+// Education Admin Pages
+import EducationAdminDashboard from './pages/app/admin/EducationAdminDashboard';
+import PayerManagement from './pages/app/admin/PayerManagement';
+import InstitutionManagement from './pages/app/admin/InstitutionManagement';
+import EscrowMonitor from './pages/app/admin/EscrowMonitor';
+import ExceptionQueue from './pages/app/admin/ExceptionQueue';
+import RevenueMonitor from './pages/app/admin/RevenueMonitor';
+
 // KYC Forms
 import ClientKYCForm from './pages/app/user/ClientKYCForm';
 import ProviderKYCForm from './pages/app/provider/ProviderKYCForm';
@@ -137,6 +145,14 @@ function App() {
             }>
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/admin/kyc" element={<AdminKYCReview />} />
+              
+              {/* Education Escrow Admin Routes */}
+              <Route path="/admin/education" element={<EducationAdminDashboard />} />
+              <Route path="/admin/education/payers" element={<PayerManagement />} />
+              <Route path="/admin/education/institutions" element={<InstitutionManagement />} />
+              <Route path="/admin/education/escrow-monitor" element={<EscrowMonitor />} />
+              <Route path="/admin/education/exceptions" element={<ExceptionQueue />} />
+              <Route path="/admin/education/revenue" element={<RevenueMonitor />} />
             </Route>
 
             {/* 404 */}

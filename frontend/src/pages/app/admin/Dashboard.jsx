@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Card from '../../../components/shared/Card';
 import Button from '../../../components/shared/Button';
 import Badge from '../../../components/shared/Badge';
@@ -17,6 +18,48 @@ const AdminDashboard = () => {
   return (
     <div>
       <h1 className="text-4xl font-bold text-primary mb-8">Admin Dashboard</h1>
+
+      {/* Service Module Quick Links */}
+      <div className="grid md:grid-cols-3 gap-6 mb-8">
+        <Link to="/admin/education">
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer bg-gradient-to-br from-primary-50 to-primary-100 border-2 border-primary-200">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 bg-primary rounded-xl flex items-center justify-center">
+                <Icon name="building" className="w-8 h-8 text-white" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-primary mb-1">Education Escrow</h3>
+                <p className="text-sm text-neutral-600">AI-powered payment matching</p>
+              </div>
+              <Icon name="arrow-right" className="w-6 h-6 text-primary" />
+            </div>
+          </Card>
+        </Link>
+
+        <Card className="bg-neutral-100 border-2 border-dashed border-neutral-300">
+          <div className="flex items-center gap-4 opacity-50">
+            <div className="w-16 h-16 bg-neutral-300 rounded-xl flex items-center justify-center">
+              <Icon name="building" className="w-8 h-8 text-neutral-500" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-bold text-neutral-600 mb-1">Construction Escrow</h3>
+              <p className="text-sm text-neutral-500">Coming soon</p>
+            </div>
+          </div>
+        </Card>
+
+        <Card className="bg-neutral-100 border-2 border-dashed border-neutral-300">
+          <div className="flex items-center gap-4 opacity-50">
+            <div className="w-16 h-16 bg-neutral-300 rounded-xl flex items-center justify-center">
+              <Icon name="heart" className="w-8 h-8 text-neutral-500" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-bold text-neutral-600 mb-1">Healthcare Payments</h3>
+              <p className="text-sm text-neutral-500">Coming soon</p>
+            </div>
+          </div>
+        </Card>
+      </div>
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">

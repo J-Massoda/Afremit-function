@@ -263,6 +263,53 @@ const Icon = ({ name, className = "w-6 h-6", color = "currentColor" }) => {
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
       </svg>
     ),
+    x: (
+      <svg className={className} fill="none" stroke={color} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    ),
+    
+    // CPU & Processing
+    cpu: (
+      <svg className={className} fill="none" stroke={color} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+      </svg>
+    ),
+    
+    // Alert & Warning Circle
+    alert: (
+      <svg className={className} fill="none" stroke={color} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    ),
+    
+    // Pause
+    pause: (
+      <svg className={className} fill="none" stroke={color} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    ),
+    
+    // Arrow Down
+    'arrow-down': (
+      <svg className={className} fill="none" stroke={color} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+      </svg>
+    ),
+    
+    // Arrow Right
+    'arrow-right': (
+      <svg className={className} fill="none" stroke={color} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+      </svg>
+    ),
+    
+    // Heart
+    heart: (
+      <svg className={className} fill="none" stroke={color} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+      </svg>
+    ),
   };
 
   return icons[name] || null;

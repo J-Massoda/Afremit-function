@@ -88,10 +88,29 @@ const PaymentPage = () => {
       const subRes = await axios.post('/api/insurance/subscriptions', subscriptionPayload);
       const subscription = subRes.data.data;
 
-      // 2) Upload ID document if present
-      if (formData.policyholderIdUpload) {
-        const fd = new FormData();
+      // 2) Upload ID documents if present (supports multiple files)
+      const fd = new FormData();
+      let hasFiles = false;
+      
+      if (formData.policyholderIdFrontUpload) {
+        fd.append('idCardFront', formData.policyholderIdFrontUpload);
+        hasFiles = true;
+      }
+      if (formData.policyholderIdBackUpload) {
+        fd.append('idCardBack', formData.policyholderIdBackUpload);
+        hasFiles = true;
+      }
+      if (formData.policyholderPassportFrontUpload) {
+        fd.append('passportFront', formData.policyholderPassportFrontUpload);
+        hasFiles = true;
+      }
+      // Support legacy single upload field
+      if (formData.policyholderIdUpload && !hasFiles) {
         fd.append('idDocument', formData.policyholderIdUpload);
+        hasFiles = true;
+      }
+      
+      if (hasFiles) {
         await axios.post(`/api/insurance/subscriptions/${subscription.id}/upload-id`, fd, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
@@ -153,15 +172,15 @@ const PaymentPage = () => {
   const totalDueToday = monthlyAmount + (addOnSelected ? addOnPrice : 0);
 
   return (
-    <div className="min-h-screen bg-neutral-50 py-12">
-      <div className="container-custom max-w-4xl">
+    <div className="min-h-screen bg-neutral-50 py-6 md:py-12">
+      <div className="container-custom max-w-4xl px-4 md:px-0">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-primary mb-4">Complete Your Payment</h1>
-          <p className="text-xl text-neutral-600">Secure payment for your insurance subscription</p>
+        <div className="text-center mb-6 md:mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-primary mb-2 md:mb-4">Complete Your Payment</h1>
+          <p className="text-base md:text-xl text-neutral-600">Secure payment for your insurance subscription</p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
           {/* Payment Form */}
           <div className="md:col-span-2">
             <Card>
@@ -362,62 +381,62 @@ const PaymentPage = () => {
 
           {/* Order Summary Sidebar */}
           <div className="md:col-span-1">
-            <Card className="sticky top-24">
-              <h3 className="text-xl font-bold text-primary mb-6">Order Summary</h3>
+            <Card className="sticky top-4 md:top-24">
+              <h3 className="text-lg md:text-xl font-bold text-primary mb-4 md:mb-6">Order Summary</h3>
 
               {/* Plan Details */}
-              <div className="mb-6 pb-6 border-b">
+              <div className="mb-4 md:mb-6 pb-4 md:pb-6 border-b">
                 <div className="flex items-center mb-3">
-                  <span className="text-4xl mr-3">{planDetails.icon}</span>
+                  <span className="text-3xl md:text-4xl mr-2 md:mr-3">{planDetails.icon}</span>
                   <div>
-                    <p className="font-bold text-primary">{planDetails.name}</p>
+                    <p className="font-bold text-primary text-sm md:text-base">{planDetails.name}</p>
                     <p className="text-xs text-neutral-600">Monthly Subscription</p>
                   </div>
                 </div>
               </div>
 
               {/* Subscriber Info */}
-              <div className="mb-6 pb-6 border-b">
-                <p className="text-sm font-semibold text-neutral-600 mb-2">Subscriber</p>
-                <p className="font-semibold text-primary">{formData.fullName}</p>
-                <p className="text-sm text-neutral-600">{formData.email}</p>
+              <div className="mb-4 md:mb-6 pb-4 md:pb-6 border-b">
+                <p className="text-xs md:text-sm font-semibold text-neutral-600 mb-2">Subscriber</p>
+                <p className="font-semibold text-primary text-sm md:text-base">{formData.fullName}</p>
+                <p className="text-xs md:text-sm text-neutral-600 truncate">{formData.email}</p>
               </div>
 
               {/* Policy Reference */}
-              <div className="mb-6 pb-6 border-b">
-                <p className="text-sm font-semibold text-neutral-600 mb-2">Policy Reference</p>
-                <p className="font-mono font-bold text-primary">{policyReference}</p>
+              <div className="mb-4 md:mb-6 pb-4 md:pb-6 border-b">
+                <p className="text-xs md:text-sm font-semibold text-neutral-600 mb-2">Policy Reference</p>
+                <p className="font-mono font-bold text-primary text-xs md:text-sm">{policyReference}</p>
               </div>
 
               {/* Amount Breakdown */}
-              <div className="space-y-3 mb-6">
-                <div className="flex justify-between text-sm">
+              <div className="space-y-2 md:space-y-3 mb-6">
+                <div className="flex justify-between text-xs md:text-sm">
                   <span className="text-neutral-600">Monthly Premium</span>
                   <span className="font-semibold">R{monthlyAmount}</span>
                 </div>
 
                 {addOnSelected && (
-                  <div className="flex justify-between text-sm">
+                  <div className="flex justify-between text-xs md:text-sm">
                     <span className="text-neutral-600">Accidental Add‑on</span>
                     <span className="font-semibold">R{addOnPrice}</span>
                   </div>
                 )}
 
-                <div className="flex justify-between text-sm">
+                <div className="flex justify-between text-xs md:text-sm">
                   <span className="text-neutral-600">Processing Fee</span>
                   <span className="font-semibold">R0</span>
                 </div>
-                <div className="flex justify-between text-sm text-green-600">
+                <div className="flex justify-between text-xs md:text-sm text-green-600">
                   <span>First Month Discount</span>
                   <span className="font-semibold">-R0</span>
                 </div>
               </div>
 
               {/* Total */}
-              <div className="bg-secondary-50 p-4 rounded-lg">
+              <div className="bg-secondary-50 p-3 md:p-4 rounded-lg">
                 <div className="flex justify-between items-center">
-                  <span className="font-bold text-primary">Total Due Today</span>
-                  <span className="text-3xl font-bold text-secondary">R{totalDueToday}</span>
+                  <span className="font-bold text-primary text-sm md:text-base">Total Due Today</span>
+                  <span className="text-2xl md:text-3xl font-bold text-secondary">R{totalDueToday}</span>
                 </div>
                 <p className="text-xs text-neutral-600 mt-2">
                   Then R{totalDueToday}/month starting next billing cycle
@@ -428,7 +447,7 @@ const PaymentPage = () => {
         </div>
 
         {/* Back Button */}
-        <div className="mt-8">
+        <div className="mt-6 md:mt-8">
           <Button
             onClick={() => navigate(-1)}
             variant="ghost"

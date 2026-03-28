@@ -12,6 +12,33 @@ const ConfirmationPage = () => {
   
   const { policyReference, planDetails, formData, paymentMethod, paymentStatus } = location.state || {};
 
+  // Store subscriber data to localStorage on mount
+  React.useEffect(() => {
+    if (policyReference && formData) {
+      const subscriberData = {
+        policyReference,
+        planDetails,
+        personalDetails: {
+          fullName: formData.fullName,
+          phone: formData.phone,
+          email: formData.email,
+          countryOfResidence: formData.countryOfResidence
+        },
+        source: new URLSearchParams(window.location.search).get('utm_source') || 'website',
+        status: 'active',
+        createdAt: new Date().toISOString(),
+        monthlyPremium: planDetails.monthlyPremium,
+        addOns: formData.addAccidental ? ['accidental'] : []
+      };
+      localStorage.setItem(`zororo_subscription_${policyReference}`, JSON.stringify(subscriberData));
+      
+      // Also store in active subscriptions list for reporting
+      const activeSubscriptions = JSON.parse(localStorage.getItem('zororo_active_subscriptions') || '[]');
+      activeSubscriptions.push(policyReference);
+      localStorage.setItem('zororo_active_subscriptions', JSON.stringify(activeSubscriptions));
+    }
+  }, [policyReference, formData, planDetails]);
+
   if (!policyReference || !planDetails) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -61,9 +88,22 @@ const ConfirmationPage = () => {
             <div className="text-center">
               <p className="text-secondary-100 mb-2">Your Policy Reference Number</p>
               <h2 className="text-4xl font-mono font-bold mb-4">{policyReference}</h2>
-              <p className="text-sm text-secondary-100">
+              <p className="text-sm text-secondary-100 mb-6">
                 Please save this reference number for future correspondence
               </p>
+              
+              {/* WhatsApp Contact CTA */}
+              <div className="flex items-center justify-center gap-3 bg-white bg-opacity-20 rounded-lg px-4 py-3 backdrop-blur">
+                <Icon name="whatsapp" className="w-5 h-5" />
+                <a
+                  href={`https://wa.me/+263771234567?text=Reference: ${policyReference}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:opacity-80 transition-opacity font-semibold text-sm"
+                >
+                  Chat on WhatsApp
+                </a>
+              </div>
             </div>
           </Card>
         </motion.div>

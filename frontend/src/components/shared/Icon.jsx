@@ -310,6 +310,13 @@ const Icon = ({ name, className = "w-6 h-6", color = "currentColor" }) => {
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
       </svg>
     ),
+
+    // WhatsApp
+    whatsapp: (
+      <svg className={className} fill="none" stroke={color} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2v-5zM9 22V12h6v10M9 9l3-3 3 3" />
+      </svg>
+    ),
   };
 
   return icons[name] || null;

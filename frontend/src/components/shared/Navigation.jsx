@@ -80,6 +80,9 @@ const Navigation = () => {
                     <Link to="/services/healthcare" className="block px-4 py-2 hover:bg-secondary-50 hover:text-secondary-700">Healthcare Services</Link>
                     <div className="border-t border-neutral-200 my-2"></div>
                     <Link to="/insurance/zororo-phumulani" className="block px-4 py-2 hover:bg-secondary-50 hover:text-secondary-700">Zororo Phumulani Insurance</Link>
+                    <Link to="/insurance/lookup" className="block px-4 py-2 hover:bg-secondary-50 hover:text-secondary-700 flex items-center gap-2">
+                      <Icon name="search" className="w-4 h-4" /> Find Your Policy
+                    </Link>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -288,6 +291,13 @@ const Navigation = () => {
                           onClick={() => setMobileMenuOpen(false)}
                         >
                           Zororo Phumulani Insurance
+                        </Link>
+                        <Link 
+                          to="/insurance/lookup" 
+                          className="block py-2 text-sm hover:text-secondary"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          Find Your Policy
                         </Link>
                       </motion.div>
                     )}

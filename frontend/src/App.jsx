@@ -25,6 +25,7 @@ import InsurancePlans from './pages/insurance/InsurancePlans';
 import SubscriptionFlow from './pages/insurance/SubscriptionFlow';
 import PaymentPage from './pages/insurance/PaymentPage';
 import ConfirmationPage from './pages/insurance/ConfirmationPage';
+import InsuranceLookup from './pages/insurance/InsuranceLookup';
 
 // App Pages (After Login)
 import UserDashboard from './pages/app/user/Dashboard';
@@ -44,6 +45,9 @@ import InstitutionManagement from './pages/app/admin/InstitutionManagement';
 import EscrowMonitor from './pages/app/admin/EscrowMonitor';
 import ExceptionQueue from './pages/app/admin/ExceptionQueue';
 import RevenueMonitor from './pages/app/admin/RevenueMonitor';
+
+// Insurance Admin Pages
+import InsuranceReports from './pages/app/admin/InsuranceReports';
 
 // KYC Forms
 import ClientKYCForm from './pages/app/user/ClientKYCForm';
@@ -108,6 +112,7 @@ function App() {
               <Route path="/insurance/subscribe/:planId" element={<SubscriptionFlow />} />
               <Route path="/insurance/payment" element={<PaymentPage />} />
               <Route path="/insurance/confirmation" element={<ConfirmationPage />} />
+              <Route path="/insurance/lookup" element={<InsuranceLookup />} />
             </Route>
 
             {/* Auth Routes */}
@@ -153,6 +158,9 @@ function App() {
               <Route path="/admin/education/escrow-monitor" element={<EscrowMonitor />} />
               <Route path="/admin/education/exceptions" element={<ExceptionQueue />} />
               <Route path="/admin/education/revenue" element={<RevenueMonitor />} />
+              
+              {/* Insurance Admin Routes */}
+              <Route path="/admin/insurance-reports" element={<InsuranceReports />} />
             </Route>
 
             {/* 404 */}

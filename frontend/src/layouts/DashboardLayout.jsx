@@ -30,6 +30,8 @@ const DashboardLayout = ({ role }) => {
       { name: 'Dashboard', path: '/admin/dashboard', icon: 'dashboard' },
       { name: 'Approve Providers', path: '/admin/dashboard', icon: 'check' },
       { name: 'Manage Contracts', path: '/admin/dashboard', icon: 'edit' },
+      { name: 'Education Escrow', path: '/admin/education', icon: 'building' },
+      { name: 'Insurance Reports', path: '/admin/insurance-reports', icon: 'chart' },
     ],
   };
 

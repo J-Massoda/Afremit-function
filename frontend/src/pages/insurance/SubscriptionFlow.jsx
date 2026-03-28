@@ -11,6 +11,7 @@ const SubscriptionFlow = () => {
   const navigate = useNavigate();
   
   const [currentStep, setCurrentStep] = useState(1);
+  const [idUploadType, setIdUploadType] = useState('manual'); // 'manual', 'idcard', 'passport'
   const [formData, setFormData] = useState({
     // Step 1: Personal Details
     fullName: '',
@@ -18,9 +19,12 @@ const SubscriptionFlow = () => {
     email: '',
     countryOfResidence: '',
     
-    // Step 2: Beneficiary Details
-    policyholderIdPassport: '',
-    policyholderIdUpload: null, // file object for ID / Passport photo
+    // Step 2: Beneficiary Details - Flexible ID Upload
+    policyholderIdPassport: '', // manual entry
+    policyholderIdUpload: null, // legacy single file
+    policyholderIdFrontUpload: null, // ID card front
+    policyholderIdBackUpload: null, // ID card back
+    policyholderPassportFrontUpload: null, // passport front
     spouseFullName: '',
     spouseIdPassport: '',
     spouseDateOfBirth: '',
@@ -103,8 +107,12 @@ const SubscriptionFlow = () => {
       case 1:
         return formData.fullName && formData.phone && formData.email && formData.countryOfResidence;
       case 2:
-        // allow either typed ID/passport OR uploaded ID file
-        return (formData.policyholderIdPassport || formData.policyholderIdUpload) && formData.beneficiaryName && formData.beneficiaryRelationship;
+        // Allow any ONE path: manual text OR ID card (both sides) OR passport (front)
+        const hasManualId = formData.policyholderIdPassport && formData.policyholderIdPassport.trim() !== '';
+        const hasIdCard = formData.policyholderIdFrontUpload && formData.policyholderIdBackUpload;
+        const hasPassport = formData.policyholderPassportFrontUpload;
+        const hasValidIdUpload = hasManualId || hasIdCard || hasPassport;
+        return hasValidIdUpload && formData.beneficiaryName && formData.beneficiaryRelationship;
       case 3:
         return formData.acceptTerms && formData.acceptWaitingPeriod;
       default:
@@ -263,30 +271,113 @@ const SubscriptionFlow = () => {
               >
                 <h2 className="text-2xl font-bold text-primary mb-6">Beneficiary & Family Details</h2>
                 <div className="space-y-6">
-                  {/* Policyholder ID */}
+                  {/* Policyholder ID - Flexible Upload */}
                   <div>
-                    <label className="block text-sm font-semibold text-primary mb-2">
-                      Policyholder ID / Passport Number <span className="text-red-500">*</span>
+                    <label className="block text-sm font-semibold text-primary mb-3">
+                      Policyholder Identification <span className="text-red-500">*</span>
                     </label>
-                    <input
-                      type="text"
-                      name="policyholderIdPassport"
-                      value={formData.policyholderIdPassport}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent"
-                      placeholder="ID or Passport Number"
-                    />
+                    
+                    {/* Tab Selector */}
+                    <div className="flex gap-2 mb-4 border-b border-neutral-200">
+                      <button
+                        type="button"
+                        onClick={() => setIdUploadType('manual')}
+                        className={`px-4 py-2 font-semibold border-b-2 transition-all ${
+                          idUploadType === 'manual'
+                            ? 'border-secondary text-secondary'
+                            : 'border-transparent text-neutral-600 hover:text-primary'
+                        }`}
+                      >
+                        Manual Entry
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setIdUploadType('idcard')}
+                        className={`px-4 py-2 font-semibold border-b-2 transition-all ${
+                          idUploadType === 'idcard'
+                            ? 'border-secondary text-secondary'
+                            : 'border-transparent text-neutral-600 hover:text-primary'
+                        }`}
+                      >
+                        ID Card
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setIdUploadType('passport')}
+                        className={`px-4 py-2 font-semibold border-b-2 transition-all ${
+                          idUploadType === 'passport'
+                            ? 'border-secondary text-secondary'
+                            : 'border-transparent text-neutral-600 hover:text-primary'
+                        }`}
+                      >
+                        Passport
+                      </button>
+                    </div>
 
-                    <p className="text-xs text-neutral-500 mt-2">Or upload a photo of your ID / Passport for verification</p>
-                    <input
-                      type="file"
-                      name="policyholderIdUpload"
-                      accept="image/*,application/pdf"
-                      onChange={handleChange}
-                      className="mt-2"
-                    />
-                    {formData.policyholderIdUpload && (
-                      <div className="mt-2 text-sm text-neutral-600">Selected file: {formData.policyholderIdUpload.name}</div>
+                    {/* Manual Entry */}
+                    {idUploadType === 'manual' && (
+                      <div className="space-y-2">
+                        <input
+                          type="text"
+                          name="policyholderIdPassport"
+                          value={formData.policyholderIdPassport}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent"
+                          placeholder="Enter your ID or Passport number"
+                        />
+                        <p className="text-xs text-neutral-600">Enter your ID number or passport number for verification</p>
+                      </div>
+                    )}
+
+                    {/* ID Card Upload */}
+                    {idUploadType === 'idcard' && (
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-xs font-semibold text-primary mb-2">Front of ID Card</label>
+                          <input
+                            type="file"
+                            name="policyholderIdFrontUpload"
+                            accept="image/*,application/pdf"
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 border border-neutral-300 rounded-lg"
+                          />
+                          {formData.policyholderIdFrontUpload && (
+                            <p className="text-xs text-green-600 mt-1">✓ {formData.policyholderIdFrontUpload.name}</p>
+                          )}
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold text-primary mb-2">Back of ID Card</label>
+                          <input
+                            type="file"
+                            name="policyholderIdBackUpload"
+                            accept="image/*,application/pdf"
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 border border-neutral-300 rounded-lg"
+                          />
+                          {formData.policyholderIdBackUpload && (
+                            <p className="text-xs text-green-600 mt-1">✓ {formData.policyholderIdBackUpload.name}</p>
+                          )}
+                        </div>
+                        <p className="text-xs text-neutral-600">Upload clear photos of both sides of your ID card</p>
+                      </div>
+                    )}
+
+                    {/* Passport Upload */}
+                    {idUploadType === 'passport' && (
+                      <div className="space-y-2">
+                        <label className="block text-xs font-semibold text-primary mb-2">Passport Front Page</label>
+                        <input
+                          type="file"
+                          name="policyholderPassportFrontUpload"
+                          accept="image/*,application/pdf"
+                          onChange={handleChange}
+                          className="w-full px-4 py-2 border border-neutral-300 rounded-lg"
+                        />
+                        {formData.policyholderPassportFrontUpload && (
+                          <p className="text-xs text-green-600 mt-1">✓ {formData.policyholderPassportFrontUpload.name}</p>
+                        )}
+                        <p className="text-xs text-neutral-600 mt-2">Upload a clear photo of your passport front page</p>
+                      </div>
                     )}
                   </div>
 

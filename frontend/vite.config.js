@@ -14,5 +14,12 @@ export default defineConfig({
         changeOrigin: true,
       }
     }
+  },
+  // Ensure public assets are properly copied during build
+  publicDir: 'public',
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    copyPublicDir: true
   }
 })

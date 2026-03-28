@@ -4,6 +4,7 @@ import { useInView } from 'react-intersection-observer';
 import { Link } from 'react-router-dom';
 import Button from '../../components/shared/Button';
 import Card from '../../components/shared/Card';
+import PartnerBannerSlider from '../../components/shared/PartnerBannerSlider';
 import VerificationBadge from '../../components/shared/VerificationBadge';
 import { useAuth } from '../../context/AuthContext';
 import { providersAPI } from '../../services/api';
@@ -340,6 +341,9 @@ const LandingPage = () => {
           )}
         </div>
       </section>
+
+      {/* Partner Banner Slider */}
+      <PartnerBannerSlider />
 
       {/* Why Choose Us */}
       <section className="section bg-white">

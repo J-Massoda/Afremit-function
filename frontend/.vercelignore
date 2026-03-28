@@ -7,3 +7,5 @@ node_modules
 *.log
 dist
 .DS_Store
+# Keep public assets
+!public/assets

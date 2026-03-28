@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 80" width="160" height="80">
+  <rect width="160" height="80" fill="#f0f0f0" rx="8"/>
+  <text x="80" y="35" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#333333">WhatsApp</text>
+  <text x="80" y="55" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="#666666">Communication</text>
+</svg>

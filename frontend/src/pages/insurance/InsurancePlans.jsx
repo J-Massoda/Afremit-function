@@ -168,7 +168,7 @@ const InsurancePlans = () => {
       </section>
 
       {/* Plan Details Sections */}
-      {plans.map((plan, index) => (
+      {plans.filter(p => p.category === selectedCategory).map((plan, index) => (
         <section 
           key={plan.id} 
           id={`plan-details-${plan.id}`}

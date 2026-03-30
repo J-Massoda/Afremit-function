@@ -15,10 +15,23 @@ const InsuranceReports = () => {
     return plansData.subscriberAnalytics || [];
   }, []);
 
+  // Extract unique franchise locations
+  const franchiseLocations = useMemo(() => {
+    const locations = new Set();
+    subscribers.forEach(sub => {
+      if (sub.source.startsWith('franchise:')) {
+        const location = sub.source.split(':')[1];
+        locations.add(location);
+      }
+    });
+    return Array.from(locations).sort();
+  }, [subscribers]);
+
   // Filter logic
   const filteredSubscribers = useMemo(() => {
     return subscribers.filter(sub => {
-      const matchesSource = filterSource === 'all' || sub.source === filterSource;
+      const matchesSource = filterSource === 'all' || 
+        (filterSource.startsWith('franchise:') ? sub.source === filterSource : sub.source === filterSource);
       const matchesStatus = filterStatus === 'all' || sub.status === filterStatus;
       const matchesSearch = searchTerm === '' || 
         sub.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -276,7 +289,16 @@ const InsuranceReports = () => {
                     <option value="all">All Sources</option>
                     <option value="website">Website</option>
                     <option value="whatsapp">WhatsApp</option>
-                    <option value="franchise">Franchise</option>
+                    {franchiseLocations.length > 0 && (
+                      <>
+                        <option disabled>─ Franchise Partners ─</option>
+                        {franchiseLocations.map(location => (
+                          <option key={location} value={`franchise:${location}`}>
+                            {`Franchise: ${location.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}`}
+                          </option>
+                        ))}
+                      </>
+                    )}
                   </select>
                 </div>
                 <div>

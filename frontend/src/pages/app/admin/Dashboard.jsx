@@ -71,8 +71,8 @@ const AdminDashboard = () => {
             <div className="w-12 md:w-16 h-12 md:h-16 bg-neutral-300 rounded-xl flex-shrink-0 flex items-center justify-center mb-2 sm:mb-0">
               <Icon name="building" className="w-6 md:w-8 h-6 md:h-8 text-neutral-500" />
             </div>
-            <div className="flex-1 text-center sm:text-left">
-              <h3 className="text-base md:text-lg font-bold text-neutral-600 mb-1">Construction Escrow</h3>
+            <div className="flex-1 text-center sm:text-left min-w-0">
+              <h3 className="text-base md:text-lg font-bold text-neutral-600 mb-1 line-clamp-2 break-words">Construction Escrow</h3>
               <p className="text-xs md:text-sm text-neutral-500">Coming soon</p>
             </div>
           </div>

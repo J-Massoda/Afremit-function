@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
+import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import Card from '../../../components/shared/Card';
 import Button from '../../../components/shared/Button';
 import Icon from '../../../components/shared/Icon';
@@ -70,6 +71,30 @@ const InsuranceReports = () => {
       sourcePercentages
     };
   }, [subscribers]);
+
+  // Prepare chart data
+  const chartData = useMemo(() => {
+    return [
+      {
+        name: 'WhatsApp',
+        subscribers: stats.sourceBreakdown.whatsapp,
+        percentage: stats.sourcePercentages.whatsapp,
+        fill: '#10b981'
+      },
+      {
+        name: 'Franchise',
+        subscribers: stats.sourceBreakdown.franchise,
+        percentage: stats.sourcePercentages.franchise,
+        fill: '#8b5cf6'
+      },
+      {
+        name: 'Website',
+        subscribers: stats.sourceBreakdown.website,
+        percentage: stats.sourcePercentages.website,
+        fill: '#3b82f6'
+      }
+    ];
+  }, [stats]);
 
   const handleExportCSV = () => {
     const headers = ['Policy Reference', 'Name', 'Email', 'Phone', 'Plan', 'Source', 'Status', 'Monthly Premium', 'Created At'];
@@ -254,6 +279,67 @@ const InsuranceReports = () => {
               <h3 className="font-bold text-primary mb-2 text-sm md:text-base">Franchise</h3>
               <p className="text-2xl md:text-3xl font-bold text-purple-600 mb-1">{stats.sourceBreakdown.franchise}</p>
               <p className="text-xs md:text-sm text-neutral-600">Franchise partnerships</p>
+            </div>
+          </Card>
+        </motion.div>
+
+        {/* Charts Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 md:mb-8"
+        >
+          {/* Bar Chart */}
+          <Card>
+            <h3 className="font-bold text-primary mb-4 text-sm md:text-base">Subscriber Distribution by Source</h3>
+            <div className="w-full h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={chartData}
+                  layout="vertical"
+                  margin={{ top: 5, right: 30, left: 100, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <XAxis type="number" />
+                  <YAxis dataKey="name" type="category" width={95} />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb' }}
+                    formatter={(value) => [`${value} subscribers`, 'Count']}
+                  />
+                  <Bar dataKey="subscribers" fill="#8884d8" radius={[0, 8, 8, 0]}>
+                    {chartData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.fill} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </Card>
+
+          {/* Pie Chart */}
+          <Card>
+            <h3 className="font-bold text-primary mb-4 text-sm md:text-base">Market Share (%)</h3>
+            <div className="w-full h-80 flex items-center justify-center">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={chartData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, percentage }) => `${name}: ${percentage}%`}
+                    outerRadius={100}
+                    fill="#8884d8"
+                    dataKey="subscribers"
+                  >
+                    {chartData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.fill} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value) => `${value} subscribers`} />
+                </PieChart>
+              </ResponsiveContainer>
             </div>
           </Card>
         </motion.div>
